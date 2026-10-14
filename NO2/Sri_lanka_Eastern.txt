@@ -1,0 +1,215 @@
+// =====================================================================
+//  GeoAI Professional Program — Sentinel-5P Practical (SRI LANKA version)
+//  PART A (Google Earth Engine): prepare and EXPORT data to Google Drive
+//  PART B (JupyterLab): S5P_NO2_SriLanka_Analysis.ipynb
+//
+//  Focus area  : Eastern Province (replaces Delhi)
+//  Comparison  : all 9 provinces of Sri Lanka (replaces the 8 Indian cities)
+//
+//  Exports produced (all go to the Drive folder "S5P_SriLanka"):
+//    1. Eastern_NO2_Jul2025.tif      – SW-monsoon monthly mean NO2 (GeoTIFF)
+//    2. Eastern_NO2_Nov2025.tif      – NE-monsoon onset monthly mean NO2 (GeoTIFF)
+//    3. Eastern_NO2_monthly.csv      – monthly mean NO2 over Eastern Province, 2019–2026
+//    4. Province_NO2_2025.csv        – 2025 annual mean NO2 for all 9 provinces
+//    5. Eastern_boundary.geojson     – Eastern Province boundary for map overlay
+//    6. SriLanka_provinces.geojson   – all 9 province boundaries for map overlay
+//    7. SriLanka_NO2_Jul2025.tif     – (bonus) whole-country July composite
+//    8. SriLanka_NO2_Nov2025.tif     – (bonus) whole-country November composite
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// STEP 1. Study area
+// ---------------------------------------------------------------------
+// Option A (recommended): your own province shapefile uploaded as an asset.
+// var provinces = ee.FeatureCollection('projects/YOUR_PROJECT/assets/srilanka_provinces');
+
+// Option B (fallback): FAO GAUL level-1 = the 9 provinces of Sri Lanka
+var provinces = ee.FeatureCollection('FAO/GAUL/2015/level1')
+  .filter(ee.Filter.eq('ADM0_NAME', 'Sri Lanka'));
+
+// Check: should print 9 and the nine names
+//   Central, Eastern, North Central, North Western, Northern,
+//   Sabaragamuwa, Southern, Uva, Western
+print('Number of provinces:', provinces.size());
+print('Province names:', provinces.aggregate_array('ADM1_NAME'));
+
+// Eastern Province = the main study area
+var eastern = provinces.filter(ee.Filter.eq('ADM1_NAME', 'Eastern'));
+var easternGeom = eastern.geometry();
+
+// Export boxes. S5P pixels are ~5.5 km, so we export a wider box than the
+// province so the map is not cut at the border.
+var easternBox = easternGeom.bounds().buffer(15000).bounds();   // around Eastern Province
+var lkBox = provinces.geometry().bounds().buffer(15000).bounds(); // whole island
+
+Map.centerObject(eastern, 8);
+Map.addLayer(provinces.style({color: 'gray', fillColor: '00000000', width: 1}),
+             {}, 'All 9 provinces');
+Map.addLayer(eastern.style({color: 'white', fillColor: '00000000', width: 3}),
+             {}, 'Eastern Province boundary');
+
+
+// ---------------------------------------------------------------------
+// STEP 2. Load the Sentinel-5P NO2 collection
+// ---------------------------------------------------------------------
+var BAND = 'tropospheric_NO2_column_number_density';   // unit: mol/m²
+var SCALE = 1113.2;                                      // native L3 grid (~0.01°)
+
+var no2 = ee.ImageCollection('COPERNICUS/S5P/OFFL/L3_NO2')
+  .select(BAND)
+  .filterBounds(lkBox);
+
+// Quick check: how many images in one month?
+print('Images in July 2025:',
+      no2.filterDate('2025-07-01', '2025-08-01').size());
+
+
+// ---------------------------------------------------------------------
+// STEP 3. Monthly mean composites
+//   July     : South-West monsoon (dry, sunny season in the East)
+//   November : start of the North-East monsoon (rainy season in the East)
+// ---------------------------------------------------------------------
+var jul = no2.filterDate('2025-07-01', '2025-08-01').mean().rename('NO2');
+var nov = no2.filterDate('2025-11-01', '2025-12-01').mean().rename('NO2');
+
+// Sri Lanka NO2 is much lower than Delhi, so the colour stretch is smaller
+var vis = {
+  min: 0, max: 0.00006,
+  palette: ['black', 'blue', 'purple', 'cyan', 'green', 'yellow', 'red']
+};
+Map.addLayer(jul.clip(lkBox), vis, 'NO2 July 2025 (SW monsoon)');
+Map.addLayer(nov.clip(lkBox), vis, 'NO2 Nov 2025 (NE monsoon onset)');
+
+// Demo: a single day is noisy and has gaps — this is why we composite
+var oneDay = no2.filterDate('2025-11-10', '2025-11-11').mean();
+Map.addLayer(oneDay.clip(lkBox), vis, 'Single day (10 Nov 2025)', false);
+
+
+// ---------------------------------------------------------------------
+// STEP 4. Quick statistics inside Eastern Province (to cross-check in Python)
+// ---------------------------------------------------------------------
+var reducer = ee.Reducer.mean()
+  .combine(ee.Reducer.minMax(), '', true)
+  .combine(ee.Reducer.stdDev(), '', true);
+
+print('July 2025 stats, Eastern (mol/m²):', jul.reduceRegion({
+  reducer: reducer, geometry: easternGeom, scale: SCALE, maxPixels: 1e9}));
+print('Nov 2025 stats, Eastern (mol/m²):', nov.reduceRegion({
+  reducer: reducer, geometry: easternGeom, scale: SCALE, maxPixels: 1e9}));
+
+
+// ---------------------------------------------------------------------
+// STEP 5. Monthly time series over Eastern Province, Jan 2019 – Sep 2026
+// ---------------------------------------------------------------------
+var start = ee.Date('2019-01-01');
+var end = ee.Date('2026-10-01');
+var nMonths = end.difference(start, 'month').round();
+
+var monthly = ee.FeatureCollection(
+  ee.List.sequence(0, nMonths.subtract(1)).map(function (m) {
+    var s = start.advance(m, 'month');
+    var col = no2.filterDate(s, s.advance(1, 'month'));
+    var value = ee.Algorithms.If(
+      col.size().gt(0),
+      col.mean().reduceRegion({
+        reducer: ee.Reducer.mean(), geometry: easternGeom,
+        scale: SCALE, maxPixels: 1e9
+      }).get(BAND),
+      null);
+    return ee.Feature(null, {
+      date: s.format('YYYY-MM'),
+      no2_mol_m2: value,
+      n_images: col.size()
+    });
+  })
+);
+print('Monthly series (first rows):', monthly.limit(5));
+
+// Optional: preview the chart in GEE
+print(ui.Chart.feature.byFeature(monthly, 'date', 'no2_mol_m2')
+  .setOptions({title: 'Monthly mean NO2 over Eastern Province, Sri Lanka',
+               legend: {position: 'none'}}));
+
+
+// ---------------------------------------------------------------------
+// STEP 6. Province comparison — 2025 annual mean for all 9 provinces
+//   (mean over the whole province polygon)
+// ---------------------------------------------------------------------
+var annual2025 = no2
+  .filterDate('2025-01-01', '2026-01-01')
+  .mean();
+
+var provinceStats = annual2025.reduceRegions({
+  collection: provinces.select(['ADM1_NAME']),
+  reducer: ee.Reducer.mean(),
+  scale: SCALE
+}).map(function (f) {
+  // Clean column names: province, no2_mol_m2
+  return ee.Feature(null, {
+    province: f.get('ADM1_NAME'),
+    no2_mol_m2: f.get('mean')
+  });
+});
+print('Province means 2025:', provinceStats);
+
+// Optional: bar chart of the 9 provinces
+print(ui.Chart.feature.byFeature(provinceStats, 'province', 'no2_mol_m2')
+  .setChartType('ColumnChart')
+  .setOptions({title: '2025 mean tropospheric NO2 by province',
+               legend: {position: 'none'},
+               vAxis: {title: 'mol/m²'}}));
+
+
+// ---------------------------------------------------------------------
+// STEP 7. EXPORT everything to Google Drive
+//   Masked (no-data) pixels are written as -9999 so Python can detect them.
+//   After running: open the "Tasks" tab (top right) and click RUN on each.
+// ---------------------------------------------------------------------
+var FOLDER = 'S5P_SriLanka';
+
+// 1–2. Eastern Province rasters (GeoTIFF)
+Export.image.toDrive({
+  image: jul.unmask(-9999).toFloat(), description: 'Eastern_NO2_Jul2025', folder: FOLDER,
+  region: easternBox, scale: SCALE, crs: 'EPSG:4326', maxPixels: 1e9
+});
+
+Export.image.toDrive({
+  image: nov.unmask(-9999).toFloat(), description: 'Eastern_NO2_Nov2025', folder: FOLDER,
+  region: easternBox, scale: SCALE, crs: 'EPSG:4326', maxPixels: 1e9
+});
+
+// 3. Eastern Province monthly time series (CSV)
+Export.table.toDrive({
+  collection: monthly, description: 'Eastern_NO2_monthly', folder: FOLDER,
+  fileFormat: 'CSV', selectors: ['date', 'no2_mol_m2', 'n_images']
+});
+
+// 4. 9-province annual comparison (CSV)
+Export.table.toDrive({
+  collection: provinceStats, description: 'Province_NO2_2025', folder: FOLDER,
+  fileFormat: 'CSV', selectors: ['province', 'no2_mol_m2']
+});
+
+// 5. Eastern Province boundary (GeoJSON, for map overlay in Python)
+Export.table.toDrive({
+  collection: eastern.select(['ADM1_NAME']),
+  description: 'Eastern_boundary', folder: FOLDER, fileFormat: 'GeoJSON'
+});
+
+// 6. All 9 province boundaries (GeoJSON, for map overlay in Python)
+Export.table.toDrive({
+  collection: provinces.select(['ADM1_NAME']),
+  description: 'SriLanka_provinces', folder: FOLDER, fileFormat: 'GeoJSON'
+});
+
+// 7–8. Bonus: whole-island rasters, so you can map all 9 provinces together
+Export.image.toDrive({
+  image: jul.unmask(-9999).toFloat(), description: 'SriLanka_NO2_Jul2025', folder: FOLDER,
+  region: lkBox, scale: SCALE, crs: 'EPSG:4326', maxPixels: 1e9
+});
+
+Export.image.toDrive({
+  image: nov.unmask(-9999).toFloat(), description: 'SriLanka_NO2_Nov2025', folder: FOLDER,
+  region: lkBox, scale: SCALE, crs: 'EPSG:4326', maxPixels: 1e9
+});
