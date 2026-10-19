@@ -1,0 +1,27 @@
+{
+    "project": "GeoAI Environmental Monitoring",
+    "study_area": "India",
+    "data_source": "Environmental Monitoring Stations",
+    "date_range": {
+        "start": "2025-04-01",
+        "end": "2025-06-30"
+    },
+    "variables": [
+        "latitude",
+        "longitude",
+        "NDVI",
+        "temperature",
+        "rainfall"
+    ],
+    "stations": 8,
+    "total_records": 743,
+    "data_quality": {
+        "missing_coordinates": 18,
+        "invalid_coordinates": 10,
+        "duplicate_records": 15
+    },
+    "processing": {
+        "status": "completed",
+        "method": "Python automated workflow"
+    }
+}

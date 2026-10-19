@@ -1,0 +1,17 @@
+record_id,date,station,city,latitude,longitude,ndvi,temperature,rainfall,region,sensor
+R00001,4/1/2025,S001,Delhi,28.6139,77.209,0.42,39.2,2.4,North,Sensor_A
+R00002,4/2/2025,S001,Delhi,28.6142,77.2086,0.43,40.1,0,North,Sensor_A
+R00003,4/1/2025,S003,Mumbai,19.076,72.8777,0.51,34.6,5.2,West,Sensor_A
+R00004,4/2/2025,S003,Mumbai,19.0757,72.8781,0.49,35,1.8,West,Sensor_A
+R00005,4/1/2025,S004,Bhubaneswar,20.2961,85.8245,0.56,33.4,7.5,East,Sensor_C
+R00006,4/2/2025,S004,Bhubaneswar,20.2964,85.8241,0.55,34,3.1,East,Sensor_C
+R00007,4/3/2025,S002,Jodhpur,26.2389,73.0243,0.28,41.5,0,North,Sensor_B
+R00008,4/3/2025,S005,Chennai,13.0827,80.2707,0.47,35.2,4.7,South,Sensor_B
+R00009,4/4/2025,S006,Hyderabad,17.385,78.4867,0.44,36.1,2.2,South,Sensor_C
+R00010,4/4/2025,S007,Kolkata,22.5726,88.3639,0.5,34.8,8.4,East,Sensor_A
+R00011,4/5/2025,S008,Ahmedabad,23.0225,72.5714,0.31,38.7,0.5,West,Sensor_B
+R00012,4/5/2025,S001,Delhi,125.75,77.209,0.4,41,0,North,Sensor_A
+R00013,4/6/2025,S003,Mumbai,19.0762,210.4,0.52,34.1,6.3,West,Sensor_A
+R00014,4/6/2025,S004,Bhubaneswar,,85.8247,0.57,33.8,4.2,East,Sensor_C
+R00015,4/7/2025,S005,Chennai,13.083,,0.46,35.5,5.1,South,Sensor_B
+R00003,4/1/2025,S003,Mumbai,19.076,72.8777,0.51,34.6,5.2,West,Sensor_A
