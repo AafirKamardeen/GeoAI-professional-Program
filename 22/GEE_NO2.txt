@@ -1,0 +1,173 @@
+// =====================================================================
+//  GeoAI Professional Program — Sentinel-5P Practical
+//  PART A (Google Earth Engine): prepare and EXPORT data to Google Drive
+//  PART B (JupyterLab): S5P_NO2_Delhi_Analysis.ipynb
+//
+//  Exports produced (all go to the Drive folder "S5P_Delhi"):
+//    1. Delhi_NO2_Jul2025.tif   – monsoon monthly mean NO2 (GeoTIFF)
+//    2. Delhi_NO2_Nov2025.tif   – winter  monthly mean NO2 (GeoTIFF)
+//    3. Delhi_NO2_monthly.csv   – monthly mean NO2 over Delhi, 2019–2026
+//    4. City_NO2_2025.csv       – 2025 annual mean NO2 for 8 Indian cities
+//    5. Delhi_boundary.geojson  – boundary for map overlay in Python
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// STEP 1. Study area
+// ---------------------------------------------------------------------
+// Option A (recommended): the Delhi shapefile you imported last class.
+// Replace the path with your own asset path.
+// var delhi = ee.FeatureCollection('projects/YOUR_PROJECT/assets/delhi_boundary');
+
+// Option B (fallback): administrative boundary from FAO GAUL
+var delhi = ee.FeatureCollection('FAO/GAUL/2015/level1')
+  .filter(ee.Filter.eq('ADM1_NAME', 'Delhi'));
+var delhiGeom = delhi.geometry();
+
+// A wider NCR box for export, so the map is not cut at the city edge.
+// (S5P pixels are ~5.5 km, so a Delhi-only clip looks very blocky.)
+var ncr = ee.Geometry.Rectangle([76.6, 28.2, 77.6, 29.0]);
+
+Map.centerObject(delhi, 9);
+Map.addLayer(delhi.style({color: 'white', fillColor: '00000000', width: 2}),
+             {}, 'Delhi boundary');
+
+
+// ---------------------------------------------------------------------
+// STEP 2. Load the Sentinel-5P NO2 collection
+// ---------------------------------------------------------------------
+var BAND = 'tropospheric_NO2_column_number_density';   // unit: mol/m²
+var SCALE = 1113.2;                                      // native L3 grid (~0.01°)
+
+var no2 = ee.ImageCollection('COPERNICUS/S5P/OFFL/L3_NO2')
+  .select(BAND)
+  .filterBounds(ncr);
+
+// Quick check: how many images in one month?
+print('Images in July 2025:',
+      no2.filterDate('2025-07-01', '2025-08-01').size());
+
+
+// ---------------------------------------------------------------------
+// STEP 3. Monthly mean composites — monsoon vs winter
+// ---------------------------------------------------------------------
+var jul = no2.filterDate('2025-07-01', '2025-08-01').mean().rename('NO2');
+var nov = no2.filterDate('2025-11-01', '2025-12-01').mean().rename('NO2');
+
+var vis = {
+  min: 0, max: 0.0002,
+  palette: ['black', 'blue', 'purple', 'cyan', 'green', 'yellow', 'red']
+};
+Map.addLayer(jul.clip(ncr), vis, 'NO2 July 2025 (monsoon)');
+Map.addLayer(nov.clip(ncr), vis, 'NO2 Nov 2025 (winter)');
+
+// Demo: a single day is noisy and has gaps — this is why we composite
+var oneDay = no2.filterDate('2025-11-10', '2025-11-11').mean();
+Map.addLayer(oneDay.clip(ncr), vis, 'Single day (10 Nov 2025)', false);
+
+
+// ---------------------------------------------------------------------
+// STEP 4. Quick statistics inside Delhi (to cross-check in Python later)
+// ---------------------------------------------------------------------
+var reducer = ee.Reducer.mean()
+  .combine(ee.Reducer.minMax(), '', true)
+  .combine(ee.Reducer.stdDev(), '', true);
+
+print('July 2025 stats (mol/m²):', jul.reduceRegion({
+  reducer: reducer, geometry: delhiGeom, scale: SCALE, maxPixels: 1e9}));
+print('Nov 2025 stats (mol/m²):', nov.reduceRegion({
+  reducer: reducer, geometry: delhiGeom, scale: SCALE, maxPixels: 1e9}));
+
+
+// ---------------------------------------------------------------------
+// STEP 5. Monthly time series over Delhi, Jan 2019 – Sep 2026
+// ---------------------------------------------------------------------
+var start = ee.Date('2019-01-01');
+var end = ee.Date('2026-10-01');
+var nMonths = end.difference(start, 'month').round();
+
+var monthly = ee.FeatureCollection(
+  ee.List.sequence(0, nMonths.subtract(1)).map(function (m) {
+    var s = start.advance(m, 'month');
+    var col = no2.filterDate(s, s.advance(1, 'month'));
+    var value = ee.Algorithms.If(
+      col.size().gt(0),
+      col.mean().reduceRegion({
+        reducer: ee.Reducer.mean(), geometry: delhiGeom,
+        scale: SCALE, maxPixels: 1e9
+      }).get(BAND),
+      null);
+    return ee.Feature(null, {
+      date: s.format('YYYY-MM'),
+      no2_mol_m2: value,
+      n_images: col.size()
+    });
+  })
+);
+print('Monthly series (first rows):', monthly.limit(5));
+
+// Optional: preview the chart in GEE
+print(ui.Chart.feature.byFeature(monthly, 'date', 'no2_mol_m2')
+  .setOptions({title: 'Monthly mean NO2 over Delhi', legend: {position: 'none'}}));
+
+
+// ---------------------------------------------------------------------
+// STEP 6. City comparison — 2025 annual mean (15 km buffer around centre)
+// ---------------------------------------------------------------------
+var cities = ee.FeatureCollection([
+  ee.Feature(ee.Geometry.Point([77.21, 28.61]), {city: 'Delhi'}),
+  ee.Feature(ee.Geometry.Point([72.88, 19.08]), {city: 'Mumbai'}),
+  ee.Feature(ee.Geometry.Point([88.36, 22.57]), {city: 'Kolkata'}),
+  ee.Feature(ee.Geometry.Point([80.27, 13.08]), {city: 'Chennai'}),
+  ee.Feature(ee.Geometry.Point([77.59, 12.97]), {city: 'Bengaluru'}),
+  ee.Feature(ee.Geometry.Point([78.49, 17.39]), {city: 'Hyderabad'}),
+  ee.Feature(ee.Geometry.Point([85.82, 20.30]), {city: 'Bhubaneswar'}),
+  ee.Feature(ee.Geometry.Point([76.78, 30.73]), {city: 'Chandigarh'})
+]).map(function (f) { return f.buffer(15000); });
+
+var annual2025 = ee.ImageCollection('COPERNICUS/S5P/OFFL/L3_NO2')
+  .select(BAND)
+  .filterDate('2025-01-01', '2026-01-01')
+  .filterBounds(cities)
+  .mean();
+
+var cityStats = annual2025.reduceRegions({
+  collection: cities, reducer: ee.Reducer.mean(), scale: SCALE
+});
+print('City means 2025:', cityStats);
+
+
+// ---------------------------------------------------------------------
+// STEP 7. EXPORT everything to Google Drive
+//   Masked (no-data) pixels are written as -9999 so Python can detect them.
+//   After running: open the "Tasks" tab (top right) and click RUN on each.
+// ---------------------------------------------------------------------
+var FOLDER = 'S5P_Delhi';
+
+Export.image.toDrive({
+  image: jul.unmask(-9999).toFloat(), description: 'Delhi_NO2_Jul2025', folder: FOLDER,
+  region: ncr, scale: SCALE, crs: 'EPSG:4326', maxPixels: 1e9
+});
+
+Export.image.toDrive({
+  image: nov.unmask(-9999).toFloat(), description: 'Delhi_NO2_Nov2025', folder: FOLDER,
+  region: ncr, scale: SCALE, crs: 'EPSG:4326', maxPixels: 1e9
+});
+
+Export.table.toDrive({
+  collection: monthly, description: 'Delhi_NO2_monthly', folder: FOLDER,
+  fileFormat: 'CSV', selectors: ['date', 'no2_mol_m2', 'n_images']
+});
+
+Export.table.toDrive({
+  collection: cityStats, description: 'City_NO2_2025', folder: FOLDER,
+  fileFormat: 'CSV', selectors: ['city', 'mean']
+});
+
+Export.table.toDrive({
+  collection: delhi, description: 'Delhi_boundary', folder: FOLDER,
+  fileFormat: 'GeoJSON'
+});
+
+// Download the S5P_Delhi folder from Drive and place the 5 files in the
+// same folder as the notebook (or in a "data/" subfolder).
