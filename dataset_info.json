@@ -1,0 +1,31 @@
+{
+    "dataset": "GeoAI Day 5 synthetic environmental monitoring data",
+    "created_for": "Day 5 \u2014 Geospatial Data Organization & Automation",
+    "date_range": [
+        "2025-04-01",
+        "2025-06-30"
+    ],
+    "source_type": "Synthetic training data",
+    "input_files": [
+        "sensor_a_environmental_data.csv",
+        "sensor_b_environmental_data.csv",
+        "sensor_c_environmental_data.csv"
+    ],
+    "total_rows": 743,
+    "intentional_missing_coordinate_rows": 18,
+    "intentional_invalid_coordinate_rows": 10,
+    "intentional_duplicate_rows_added": 15,
+    "columns": [
+        "record_id",
+        "date",
+        "station",
+        "city",
+        "latitude",
+        "longitude",
+        "ndvi",
+        "temperature",
+        "rainfall",
+        "region",
+        "sensor"
+    ]
+}
