@@ -1,0 +1,13 @@
+station_id,station_name,lat,lon,elevation_m,total_rain_mm,max_daily_mm,imd_category_peak
+RF01,Guwahati,26.15,91.75,55,683.6,134.8,Very heavy
+RF02,Tezpur,26.63,92.79,79,711.5,203.7,Very heavy
+RF03,Nagaon,26.35,92.68,61,755.8,179.8,Very heavy
+RF04,Morigaon,26.25,92.34,58,936.9,171.1,Very heavy
+RF05,Mangaldoi,26.44,92.03,66,980.8,193.8,Very heavy
+RF06,Rangia,26.45,91.61,70,815.3,157.0,Very heavy
+RF07,Dhekiajuli,26.7,92.48,88,982.4,176.4,Very heavy
+RF08,Jagiroad,26.11,92.2,52,734.6,134.8,Very heavy
+RF09,Kampur,26.13,92.66,60,696.4,139.4,Very heavy
+RF10,Hajo,26.25,91.53,57,782.2,165.8,Very heavy
+RF11,Dhing,26.47,92.47,63,1031.1,191.4,Very heavy
+RF12,Silghat,26.61,92.94,72,755.1,234.6,Extremely heavy

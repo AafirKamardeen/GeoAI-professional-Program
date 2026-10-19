@@ -1,0 +1,27 @@
+{
+"type": "FeatureCollection",
+"name": "settlements",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "name": "Guwahati", "district": "Kamrup Metro", "settlement_type": "City", "population": 1158300 }, "geometry": { "type": "Point", "coordinates": [ 91.7362, 26.1445 ] } },
+{ "type": "Feature", "properties": { "name": "North Guwahati", "district": "Kamrup", "settlement_type": "Town", "population": 32800 }, "geometry": { "type": "Point", "coordinates": [ 91.711, 26.196 ] } },
+{ "type": "Feature", "properties": { "name": "Tezpur", "district": "Sonitpur", "settlement_type": "City", "population": 103200 }, "geometry": { "type": "Point", "coordinates": [ 92.8, 26.6338 ] } },
+{ "type": "Feature", "properties": { "name": "Nagaon", "district": "Nagaon", "settlement_type": "City", "population": 140200 }, "geometry": { "type": "Point", "coordinates": [ 92.6838, 26.348 ] } },
+{ "type": "Feature", "properties": { "name": "Morigaon", "district": "Morigaon", "settlement_type": "Town", "population": 24100 }, "geometry": { "type": "Point", "coordinates": [ 92.342, 26.2525 ] } },
+{ "type": "Feature", "properties": { "name": "Jagiroad", "district": "Morigaon", "settlement_type": "Town", "population": 19000 }, "geometry": { "type": "Point", "coordinates": [ 92.199, 26.112 ] } },
+{ "type": "Feature", "properties": { "name": "Mangaldoi", "district": "Darrang", "settlement_type": "Town", "population": 27700 }, "geometry": { "type": "Point", "coordinates": [ 92.031, 26.443 ] } },
+{ "type": "Feature", "properties": { "name": "Rangia", "district": "Kamrup", "settlement_type": "Town", "population": 27900 }, "geometry": { "type": "Point", "coordinates": [ 91.615, 26.449 ] } },
+{ "type": "Feature", "properties": { "name": "Hajo", "district": "Kamrup", "settlement_type": "Town", "population": 18600 }, "geometry": { "type": "Point", "coordinates": [ 91.527, 26.246 ] } },
+{ "type": "Feature", "properties": { "name": "Dhing", "district": "Nagaon", "settlement_type": "Town", "population": 21300 }, "geometry": { "type": "Point", "coordinates": [ 92.473, 26.468 ] } },
+{ "type": "Feature", "properties": { "name": "Sonapur", "district": "Kamrup Metro", "settlement_type": "Town", "population": 15100 }, "geometry": { "type": "Point", "coordinates": [ 91.98, 26.12 ] } },
+{ "type": "Feature", "properties": { "name": "Raha", "district": "Nagaon", "settlement_type": "Town", "population": 14300 }, "geometry": { "type": "Point", "coordinates": [ 92.515, 26.233 ] } },
+{ "type": "Feature", "properties": { "name": "Kaliabor", "district": "Nagaon", "settlement_type": "Village cluster", "population": 8600 }, "geometry": { "type": "Point", "coordinates": [ 92.98, 26.56 ] } },
+{ "type": "Feature", "properties": { "name": "Bhuragaon", "district": "Morigaon", "settlement_type": "Village cluster", "population": 8100 }, "geometry": { "type": "Point", "coordinates": [ 92.306, 26.444 ] } },
+{ "type": "Feature", "properties": { "name": "Laharighat", "district": "Morigaon", "settlement_type": "Village cluster", "population": 6800 }, "geometry": { "type": "Point", "coordinates": [ 92.24, 26.33 ] } },
+{ "type": "Feature", "properties": { "name": "Sipajhar", "district": "Darrang", "settlement_type": "Village cluster", "population": 7700 }, "geometry": { "type": "Point", "coordinates": [ 91.92, 26.37 ] } },
+{ "type": "Feature", "properties": { "name": "Dhekiajuli", "district": "Sonitpur", "settlement_type": "Town", "population": 21100 }, "geometry": { "type": "Point", "coordinates": [ 92.478, 26.703 ] } },
+{ "type": "Feature", "properties": { "name": "Kampur", "district": "Nagaon", "settlement_type": "Town", "population": 10600 }, "geometry": { "type": "Point", "coordinates": [ 92.659, 26.127 ] } },
+{ "type": "Feature", "properties": { "name": "Chaparmukh", "district": "Nagaon", "settlement_type": "Village cluster", "population": 6600 }, "geometry": { "type": "Point", "coordinates": [ 92.505, 26.205 ] } },
+{ "type": "Feature", "properties": { "name": "Silghat", "district": "Nagaon", "settlement_type": "Village cluster", "population": 7700 }, "geometry": { "type": "Point", "coordinates": [ 92.935, 26.609 ] } }
+]
+}

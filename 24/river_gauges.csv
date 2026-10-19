@@ -1,0 +1,8 @@
+gauge_id,river,site,lat,lon,danger_level_m,warning_level_m,hfl_m,water_level_m,status,trend,observed_at
+CWC-01,Brahmaputra,Guwahati (Dighalighat),26.19,91.742,49.68,48.68,51.77,50.53,Above Danger,Rising,2026-07-10 08:00
+CWC-02,Brahmaputra,Tezpur,26.605,92.8,65.23,64.23,67.09,65.65,Above Danger,Steady,2026-07-10 08:00
+CWC-03,Brahmaputra,Morigaon side (Dharamtul),26.33,92.33,56.1,55.1,57.85,57.2,Above Danger,Rising,2026-07-10 08:00
+CWC-04,Kopili,Kampur,26.08,92.56,60.5,59.5,62.62,60.1,Above Warning,Falling,2026-07-10 08:00
+CWC-05,Kolong,Nagaon,26.375,92.665,57.8,56.8,59.66,58.45,Above Danger,Rising,2026-07-10 08:00
+CWC-06,Jia Bharali,NT Road Crossing,26.7,92.85,77.0,76.0,78.86,77.2,Above Danger,Falling,2026-07-10 08:00
+CWC-07,Puthimari,NH Crossing,26.3,91.59,51.75,50.75,53.79,50.45,Normal,Steady,2026-07-10 08:00
