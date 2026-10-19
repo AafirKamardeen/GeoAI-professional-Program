@@ -1,0 +1,553 @@
+
+======================================================================
+### Cell 1: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+# Flood Mapping with Sentinel-1 SAR: Central Province, Sri Lanka, November 2025
+### GeoAI Professional Program | OrbitalIQ Analytics
+**Part B: Analysis in JupyterLab**
+
+In late November 2025, Cyclone Ditwah brought extreme rainfall to Sri Lanka's central hills. The Mahaweli River and its tributaries rose sharply, and districts of the Central Province (**Kandy, Matale and Nuwara Eliya**) were among the worst affected by floods and landslides.
+
+In Part A we downloaded Sentinel-1 radar images from Google Earth Engine. Now we will:
+
+1. Load and explore the pre-flood and flood images
+2. Reduce speckle noise
+3. Detect flooded pixels with **change detection**
+4. Clean the result with supporting layers (permanent water, slope and **HAND**, which matter a lot in hilly terrain)
+5. Calculate **flooded area** and **flooded cropland**
+6. Make a final flood map and save the results
+
+**Key idea:** calm water reflects radar energy away from the satellite, so it looks **dark** (low backscatter). Land that suddenly becomes dark between the two dates has most likely flooded.
+
+> Before running: set the `PRE_LABEL` and `POST_LABEL` text in the setup cell to the real acquisition dates you used in Part A.
+
+======================================================================
+### Cell 2: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 0. Setup
+
+======================================================================
+### Cell 3: CODE cell
+======================================================================
+# Run once if a library is missing:
+# !pip install rioxarray scikit-image geopandas matplotlib pandas
+#%pip install rioxarray
+%pip install scikit-image
+import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from matplotlib.patches import Patch
+import rioxarray as rxr
+from scipy import ndimage
+from skimage.filters import threshold_otsu
+
+# Files exported from GEE (Part A). Keep them next to this notebook.
+PRE_FILE  = "srilanka_s1_pre.tif"
+POST_FILE = "srilanka_s1_post.tif"
+AUX_FILE  = "srilanka_aux.tif"
+
+# Acquisition dates used for the figure titles. EDIT these to match the
+# passes you picked in Part A (see the printed pass list in GEE).
+PRE_LABEL  = "pre-flood, Nov 2025"
+POST_LABEL = "flood, Nov-Dec 2025"
+AREA_NAME  = "Central Province, Sri Lanka"
+
+OUT_DIR = "flood_outputs"
+os.makedirs(OUT_DIR, exist_ok=True)
+
+plt.rcParams["figure.dpi"] = 110
+
+======================================================================
+### Cell 4: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 1. Load the data
+
+Each SAR file has two bands: **band 1 = VV**, **band 2 = VH**, in decibels (dB).
+The supporting file has five bands: **1 = JRC water occurrence (%)**, **2 = ESA WorldCover class**, **3 = slope (degrees)**, **4 = elevation (m)**, **5 = HAND, height above nearest drainage (m)**.
+The province shapefile `gadm41_LKA_1.shp` (with its .dbf, .shx and .prj files) is used to keep only the **Central Province**; the rectangle exported from GEE also covers parts of neighbouring provinces.
+
+======================================================================
+### Cell 5: CODE cell
+======================================================================
+pre  = rxr.open_rasterio(PRE_FILE,  masked=True)
+post = rxr.open_rasterio(POST_FILE, masked=True)
+aux  = rxr.open_rasterio(AUX_FILE,  masked=True)
+
+# Make sure every layer sits on exactly the same pixel grid as the pre-flood image
+post = post.rio.reproject_match(pre)
+aux  = aux.rio.reproject_match(pre)
+
+print("CRS        :", pre.rio.crs)
+print("Shape      :", pre.shape, "(bands, rows, cols)")
+res = pre.rio.resolution()
+PIXEL_AREA = abs(res[0] * res[1])          # m² per pixel
+print("Pixel size :", abs(res[0]), "m  ->", PIXEL_AREA, "m² per pixel")
+
+pre_vv,  pre_vh  = pre.sel(band=1).values,  pre.sel(band=2).values
+post_vv, post_vh = post.sel(band=1).values, post.sel(band=2).values
+jrc   = aux.sel(band=1).values
+lc    = aux.sel(band=2).values
+slope = aux.sel(band=3).values
+elev  = aux.sel(band=4).values
+hand  = aux.sel(band=5).values
+
+valid = np.isfinite(pre_vv) & np.isfinite(post_vv)
+
+# Clip to the Central Province boundary (GADM level 1 = provinces)
+PROVINCE_FILE  = "gadm41_LKA_1.shp"
+PROVINCE_FIELD = "NAME_1"
+PROVINCE       = "Central"
+if os.path.exists(PROVINCE_FILE):
+    os.environ["SHAPE_RESTORE_SHX"] = "YES"   # rebuild a missing .shx index file
+    import geopandas as gpd
+    from rasterio import features
+    prov = gpd.read_file(PROVINCE_FILE).to_crs(pre.rio.crs)
+    prov = prov[prov[PROVINCE_FIELD] == PROVINCE]
+    assert len(prov) > 0, f"'{PROVINCE}' not found. Available: {gpd.read_file(PROVINCE_FILE)[PROVINCE_FIELD].tolist()}"
+    inside = features.rasterize(((g, 1) for g in prov.geometry), out_shape=pre_vv.shape,
+                                transform=pre.rio.transform(), fill=0, dtype="uint8").astype(bool)
+    valid &= inside
+    print(f"Clipped to {PROVINCE} Province boundary")
+else:
+    print("Province file not found: using the whole exported rectangle")
+print(f"Valid pixels: {valid.sum():,} of {valid.size:,}")
+
+# Map extent in km (for axis labels)
+xmin, ymin, xmax, ymax = pre.rio.bounds()
+EXTENT = [xmin/1000, xmax/1000, ymin/1000, ymax/1000]
+
+======================================================================
+### Cell 6: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 2. Before vs after: what does the radar see?
+
+Bright = strong backscatter (rough land, vegetation, buildings). Dark = weak backscatter (smooth water).
+
+======================================================================
+### Cell 7: CODE cell
+======================================================================
+fig, axes = plt.subplots(1, 2, figsize=(14, 5.5), sharey=True)
+for ax, img, title in zip(axes, [pre_vv, post_vv],
+                          [f"Pre-flood VV ({PRE_LABEL})", f"Flood VV ({POST_LABEL})"]):
+    im = ax.imshow(img, cmap="gray", vmin=-25, vmax=0, extent=EXTENT)
+    ax.set_title(title)
+    ax.set_xlabel("Easting (km, UTM 44N)")
+axes[0].set_ylabel("Northing (km)")
+fig.colorbar(im, ax=axes, shrink=0.8, label="Backscatter VV (dB)")
+plt.savefig(f"{OUT_DIR}/01_pre_vs_post.png", dpi=200, bbox_inches="tight")
+plt.show()
+
+======================================================================
+### Cell 8: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+### Change composite
+Red = pre-flood, Green and Blue = flood image.
+Land that was bright before and dark during the flood shows up **red**. Areas that stayed the same look grey.
+
+======================================================================
+### Cell 9: CODE cell
+======================================================================
+def to01(db, lo=-25, hi=0):
+    return np.clip((db - lo) / (hi - lo), 0, 1)
+
+rgb = np.dstack([to01(pre_vv), to01(post_vv), to01(post_vv)])
+rgb[~valid] = 1
+
+plt.figure(figsize=(10, 5.5))
+plt.imshow(rgb, extent=EXTENT)
+plt.title("Change composite: red = land that became water")
+plt.xlabel("Easting (km)"); plt.ylabel("Northing (km)")
+plt.savefig(f"{OUT_DIR}/02_change_rgb.png", dpi=200, bbox_inches="tight")
+plt.show()
+
+======================================================================
+### Cell 10: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 3. Histogram: why thresholding works
+
+If an image has both water and land, its histogram usually shows **two humps**: a dark one (water) and a bright one (land). The valley between them is a natural place to split water from land.
+
+======================================================================
+### Cell 11: CODE cell
+======================================================================
+fig, ax = plt.subplots(figsize=(9, 4))
+ax.hist(pre_vv[valid],  bins=200, range=(-30, 5), alpha=0.6, label="Pre-flood",  color="tab:green")
+ax.hist(post_vv[valid], bins=200, range=(-30, 5), alpha=0.6, label="Flood",      color="tab:blue")
+ax.set_xlabel("VV backscatter (dB)"); ax.set_ylabel("Number of pixels")
+ax.set_title("Backscatter distribution before and during the flood")
+ax.legend()
+plt.show()
+
+======================================================================
+### Cell 12: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 4. Speckle filtering
+
+SAR images have a grainy "salt and pepper" texture called **speckle**. It comes from many small scatterers inside each pixel interfering with each other. It is not real detail, so we reduce it before classification.
+
+We use the **Lee filter**: it smooths flat, uniform areas strongly but keeps edges (like river banks) sharp. Filtering is done on linear power values, not dB.
+
+======================================================================
+### Cell 13: CODE cell
+======================================================================
+def lee_filter(img_db, size=5, enl=4.4):
+    """Lee speckle filter.
+    img_db : 2-D array in dB (NaN = no data)
+    size   : moving window size in pixels
+    enl    : equivalent number of looks (~4.4 for Sentinel-1 IW GRD)
+    """
+    lin = np.power(10.0, img_db / 10.0)          # dB -> linear power
+    ok = np.isfinite(lin)
+    z = np.where(ok, lin, 0.0)
+
+    with np.errstate(invalid="ignore", divide="ignore"):
+        n     = ndimage.uniform_filter(ok.astype(float), size)
+        mean  = ndimage.uniform_filter(z, size) / n
+        mean2 = ndimage.uniform_filter(z * z, size) / n
+        var_z = np.maximum(mean2 - mean**2, 0)
+
+        cu2 = 1.0 / enl                            # speckle variation coefficient²
+        var_x = np.maximum((var_z - mean**2 * cu2) / (1 + cu2), 0)
+        k = np.where(var_z > 0, var_x / var_z, 0)  # 0 = smooth fully, 1 = keep pixel
+        out = mean + k * (z - mean)
+
+    out = np.where(ok & (out > 0), out, np.nan)
+    return 10 * np.log10(out)                      # back to dB
+
+pre_vv_f  = lee_filter(pre_vv)
+post_vv_f = lee_filter(post_vv)
+pre_vh_f  = lee_filter(pre_vh)
+post_vh_f = lee_filter(post_vh)
+print("Speckle filtering done")
+
+======================================================================
+### Cell 14: CODE cell
+======================================================================
+# Zoom into the centre of the image to see the difference
+r0, c0 = pre_vv.shape[0] // 2, pre_vv.shape[1] // 2
+win = np.s_[max(r0-200, 0):r0+200, max(c0-200, 0):c0+200]
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 5))
+axes[0].imshow(post_vv[win],   cmap="gray", vmin=-25, vmax=0); axes[0].set_title("Before filtering (speckle)")
+axes[1].imshow(post_vv_f[win], cmap="gray", vmin=-25, vmax=0); axes[1].set_title("After Lee filter")
+for ax in axes: ax.axis("off")
+plt.savefig(f"{OUT_DIR}/03_speckle_filter.png", dpi=200, bbox_inches="tight")
+plt.show()
+
+======================================================================
+### Cell 15: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 5. Change detection
+
+We subtract the pre-flood image from the flood image:
+
+$$\Delta\sigma^0 = \sigma^0_{flood} - \sigma^0_{pre} \quad \text{(in dB)}$$
+
+Because dB is a log scale, this difference is the same as the **log-ratio** of the two images.
+
+| Δ value | Meaning |
+|---|---|
+| close to 0 | no change |
+| strongly negative | backscatter dropped → **possible new water** |
+| positive | backscatter increased (e.g. flooded vegetation, crop growth) |
+
+A drop of **3 dB** means the returned signal fell to **half**.
+
+======================================================================
+### Cell 16: CODE cell
+======================================================================
+diff = post_vv_f - pre_vv_f
+
+fig, axes = plt.subplots(1, 2, figsize=(15, 5), gridspec_kw={"width_ratios": [1.6, 1]})
+im = axes[0].imshow(diff, cmap="RdBu", vmin=-10, vmax=10, extent=EXTENT)
+axes[0].set_title("Difference image: flood − pre (dB)   [red = drop]")
+axes[0].set_xlabel("Easting (km)"); axes[0].set_ylabel("Northing (km)")
+fig.colorbar(im, ax=axes[0], shrink=0.8, label="Δ VV (dB)")
+
+axes[1].hist(diff[np.isfinite(diff)], bins=200, range=(-15, 10), color="grey")
+axes[1].axvline(-3, color="red", ls="--", label="−3 dB")
+axes[1].set_xlabel("Δ VV (dB)"); axes[1].set_title("Distribution of change")
+axes[1].legend()
+plt.tight_layout()
+plt.savefig(f"{OUT_DIR}/04_difference.png", dpi=200, bbox_inches="tight")
+plt.show()
+
+======================================================================
+### Cell 17: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 6. Thresholds: which pixels are flooded?
+
+A pixel is classified as **flooded** when **both** are true:
+
+1. **It is dark like water in the flood image** (VV below a water threshold). We find this threshold automatically with **Otsu's method**, which picks the value that best separates the two humps of the histogram.
+2. **It became darker** than before (Δ below −3 dB). This removes water that was already there and dark surfaces that never changed.
+
+======================================================================
+### Cell 18: CODE cell
+======================================================================
+# --- Threshold 1: water threshold from Otsu on the filtered flood image ---
+vals = post_vv_f[np.isfinite(post_vv_f)]
+rng = np.random.default_rng(42)
+sample = rng.choice(vals, size=min(2_000_000, vals.size), replace=False)
+t_otsu = threshold_otsu(sample)
+print(f"Otsu water threshold: {t_otsu:.2f} dB")
+
+# Sanity check: open water in VV is normally between about -24 and -15 dB.
+# If Otsu falls outside this range, the histogram is not clearly bimodal.
+if -24 <= t_otsu <= -14:
+    T_WATER = t_otsu
+else:
+    T_WATER = -18.0
+    print("Otsu value outside the expected range -> using -18 dB instead")
+
+# --- Threshold 2: minimum backscatter drop ---
+T_DIFF = -3.0
+
+print(f"Using: water if VV < {T_WATER:.2f} dB  AND  change < {T_DIFF} dB")
+
+plt.figure(figsize=(9, 4))
+plt.hist(vals, bins=200, range=(-30, 5), color="tab:blue", alpha=0.7)
+plt.axvline(T_WATER, color="red", ls="--", lw=2, label=f"Water threshold = {T_WATER:.1f} dB")
+plt.xlabel("Filtered flood VV (dB)"); plt.ylabel("Pixels")
+plt.title("Otsu threshold on the flood image"); plt.legend()
+plt.savefig(f"{OUT_DIR}/05_otsu.png", dpi=200, bbox_inches="tight")
+plt.show()
+
+======================================================================
+### Cell 19: CODE cell
+======================================================================
+water_now  = post_vv_f < T_WATER
+became_dark = diff < T_DIFF
+flood_raw = water_now & became_dark & valid
+
+print(f"Raw flood pixels: {flood_raw.sum():,}  ->  {flood_raw.sum()*PIXEL_AREA/1e4:,.0f} ha")
+
+======================================================================
+### Cell 20: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 7. Cleaning the flood map
+
+The raw result contains false alarms. In a hilly province like Central Sri Lanka there are many of them, so we remove them step by step:
+
+| Step | Layer | Why |
+|---|---|---|
+| a | **JRC permanent water** (water ≥ 50% of the time since 1984) | Rivers, lakes and reservoirs (Kandy Lake, Victoria, Kotmale, Randenigala) are not flood |
+| b | **Slope > 5°** (SRTM) | Steep hillsides create radar shadow, which also looks dark |
+| c | **HAND > 15 m** (MERIT Hydro) | Flood water collects on low ground near drainage lines, not high above the river |
+| d | **Tiny patches** (< 10 connected pixels) | Isolated pixels are usually noise |
+
+Narrow valleys are only a few pixels wide, so do not set the slope and HAND limits too tight. Try several values in the exercises.
+
+======================================================================
+### Cell 21: CODE cell
+======================================================================
+PERM_WATER_PCT = 50     # JRC occurrence %
+MAX_SLOPE      = 5      # degrees
+MAX_HAND       = 15     # metres above nearest drainage
+MIN_PIXELS     = 10     # 10 pixels x 400 m² = 0.4 ha at 20 m
+
+perm_water = np.nan_to_num(jrc) >= PERM_WATER_PCT
+steep      = np.nan_to_num(slope) > MAX_SLOPE
+high_hand  = np.nan_to_num(hand, nan=9999) > MAX_HAND
+
+step_a = flood_raw & ~perm_water
+step_b = step_a & ~steep
+step_c = step_b & ~high_hand
+
+labels, n = ndimage.label(step_c, structure=np.ones((3, 3)))
+sizes = np.bincount(labels.ravel())
+keep = sizes >= MIN_PIXELS
+keep[0] = False                      # label 0 = background
+flood = keep[labels]
+
+ha = lambda m: m.sum() * PIXEL_AREA / 1e4
+steps = pd.DataFrame({
+    "Step": ["Raw change detection", "a. minus permanent water",
+             "b. minus steep slopes", "c. minus high HAND",
+             "d. minus tiny patches (final)"],
+    "Flooded area (ha)": [ha(flood_raw), ha(step_a), ha(step_b), ha(step_c), ha(flood)],
+}).round(0)
+steps
+
+======================================================================
+### Cell 22: CODE cell
+======================================================================
+fig, axes = plt.subplots(2, 3, figsize=(17, 8), sharex=True, sharey=True)
+red = ListedColormap(["none", "red"])
+for ax, m, t in zip(axes.ravel(), [flood_raw, step_a, step_b, step_c, flood], steps["Step"]):
+    ax.imshow(post_vv_f, cmap="gray", vmin=-25, vmax=0, extent=EXTENT)
+    ax.imshow(m.astype(int), cmap=red, vmin=0, vmax=1, extent=EXTENT, interpolation="nearest")
+    ax.set_title(f"{t}: {ha(m):,.0f} ha", fontsize=10)
+axes.ravel()[-1].axis("off")
+plt.tight_layout()
+plt.savefig(f"{OUT_DIR}/06_cleaning_steps.png", dpi=200, bbox_inches="tight")
+plt.show()
+
+======================================================================
+### Cell 23: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 8. How much area flooded?
+
+======================================================================
+### Cell 24: CODE cell
+======================================================================
+flood_ha  = ha(flood)
+flood_km2 = flood_ha / 100
+aoi_km2   = valid.sum() * PIXEL_AREA / 1e6
+perm_km2  = (perm_water & valid).sum() * PIXEL_AREA / 1e6
+
+print(f"Study area analysed      : {aoi_km2:,.0f} km²")
+print(f"Permanent water (rivers) : {perm_km2:,.0f} km²")
+print(f"FLOODED AREA             : {flood_ha:,.0f} ha  =  {flood_km2:,.1f} km²")
+print(f"Share of study area      : {100*flood_km2/aoi_km2:.1f} %")
+
+======================================================================
+### Cell 25: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 9. What got flooded? Land cover exposure
+
+We overlay the flood map on **ESA WorldCover 2021** to see which land cover types went under water. In the Central Province, valley-floor **cropland** (paddy and vegetables) and **built-up** areas along the Mahaweli and its tributaries are the key impacts. Note that tea plantations and home gardens are often classed as tree cover, shrubland or cropland, so read the class names with care.
+
+======================================================================
+### Cell 26: CODE cell
+======================================================================
+WC_CLASSES = {10: "Tree cover", 20: "Shrubland", 30: "Grassland", 40: "Cropland",
+              50: "Built-up", 60: "Bare / sparse", 80: "Permanent water",
+              90: "Herbaceous wetland", 95: "Mangroves"}
+
+rows = []
+for code_, name in WC_CLASSES.items():
+    cls = (lc == code_) & valid
+    if cls.sum() == 0:
+        continue
+    rows.append({"Land cover": name,
+                 "Total area (ha)": ha(cls),
+                 "Flooded (ha)": ha(cls & flood),
+                 "% of class flooded": 100 * (cls & flood).sum() / cls.sum()})
+
+exposure = pd.DataFrame(rows).sort_values("Flooded (ha)", ascending=False).round(1)
+exposure.to_csv(f"{OUT_DIR}/flood_by_landcover.csv", index=False)
+exposure
+
+======================================================================
+### Cell 27: CODE cell
+======================================================================
+fig, ax = plt.subplots(figsize=(9, 4))
+e = exposure[exposure["Flooded (ha)"] > 0]
+ax.barh(e["Land cover"], e["Flooded (ha)"], color="#1f6fb4")
+ax.invert_yaxis()
+ax.set_xlabel("Flooded area (ha)")
+ax.set_title("Flooded area by land cover")
+for y, v in enumerate(e["Flooded (ha)"]):
+    ax.text(v, y, f" {v:,.0f}", va="center", fontsize=9)
+plt.tight_layout()
+plt.savefig(f"{OUT_DIR}/07_landcover_exposure.png", dpi=200, bbox_inches="tight")
+plt.show()
+
+crop_ha = exposure.loc[exposure["Land cover"] == "Cropland", "Flooded (ha)"].sum()
+print(f"Flooded cropland: {crop_ha:,.0f} ha")
+
+======================================================================
+### Cell 28: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 10. Final flood map
+
+======================================================================
+### Cell 29: CODE cell
+======================================================================
+fig, ax = plt.subplots(figsize=(13, 7))
+ax.imshow(post_vv_f, cmap="gray", vmin=-25, vmax=0, extent=EXTENT)
+ax.imshow((perm_water & valid).astype(int), cmap=ListedColormap(["none", "#2b6cb0"]),
+          vmin=0, vmax=1, extent=EXTENT, interpolation="nearest")
+ax.imshow(flood.astype(int), cmap=ListedColormap(["none", "#e53e3e"]),
+          vmin=0, vmax=1, extent=EXTENT, interpolation="nearest")
+
+ax.legend(handles=[Patch(color="#e53e3e", label=f"Flood water ({flood_km2:,.1f} km²)"),
+                   Patch(color="#2b6cb0", label="Permanent water (JRC)")],
+          loc="lower left", framealpha=0.9)
+ax.set_title(f"Flood inundation, Central Province, Sri Lanka (Sentinel-1 SAR change detection), {POST_LABEL}",
+             fontsize=13, weight="bold")
+ax.set_xlabel("Easting (km, WGS 84 / UTM 44N)"); ax.set_ylabel("Northing (km)")
+ax.annotate("N", xy=(0.97, 0.93), xycoords="axes fraction", ha="center",
+            fontsize=14, weight="bold", color="white")
+ax.annotate("", xy=(0.97, 0.92), xytext=(0.97, 0.82), xycoords="axes fraction",
+            arrowprops=dict(arrowstyle="-|>", color="white", lw=2))
+ax.text(0.99, 0.01, "Data: Copernicus Sentinel-1, JRC GSW, ESA WorldCover | OrbitalIQ GeoAI Program",
+        transform=ax.transAxes, ha="right", va="bottom", fontsize=8, color="white")
+plt.savefig(f"{OUT_DIR}/08_final_flood_map.png", dpi=250, bbox_inches="tight")
+plt.show()
+
+======================================================================
+### Cell 30: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 12. Save the flood map and (optional) flooded area by district
+
+The flood map is saved as a GeoTIFF so you can open it in QGIS or ArcGIS. If you also have the GADM district file (`gadm41_LKA_2.shp`, level 2), the table below gives flooded area per district.
+
+======================================================================
+### Cell 31: CODE cell
+======================================================================
+# Save flood map (1 = flood, 0 = no flood, 255 = outside study area) as GeoTIFF
+import rasterio
+mask_out = np.where(valid, flood.astype("uint8"), 255).astype("uint8")
+with rasterio.open(f"{OUT_DIR}/flood_mask.tif", "w", driver="GTiff",
+                   height=mask_out.shape[0], width=mask_out.shape[1], count=1, dtype="uint8",
+                   crs=pre.rio.crs, transform=pre.rio.transform(), nodata=255, compress="lzw") as dst:
+    dst.write(mask_out, 1)
+print("Saved", f"{OUT_DIR}/flood_mask.tif")
+DISTRICT_FILE = "gadm41_LKA_2.shp"      # GADM level 2 = districts (optional)
+NAME_FIELD    = "NAME_2"
+DISTRICTS     = ["Kandy", "Matale", "NuwaraEliya", "Nuwara Eliya"]   # GADM may write it without a space
+
+if os.path.exists(DISTRICT_FILE):
+    os.environ["SHAPE_RESTORE_SHX"] = "YES"   # rebuild a missing .shx index file
+    import geopandas as gpd
+    from rasterio import features
+
+    gdf = gpd.read_file(DISTRICT_FILE).to_crs(pre.rio.crs)
+    gdf = gdf[gdf[NAME_FIELD].isin(DISTRICTS)].reset_index(drop=True)
+    ids = features.rasterize(
+        ((geom, i + 1) for i, geom in enumerate(gdf.geometry)),
+        out_shape=flood.shape, transform=pre.rio.transform(), fill=0, dtype="int32")
+
+    gdf["analysed_km2"] = [((ids == i + 1) & valid).sum() * PIXEL_AREA / 1e6 for i in range(len(gdf))]
+    gdf["flooded_ha"]   = [((ids == i + 1) & flood).sum() * PIXEL_AREA / 1e4 for i in range(len(gdf))]
+    district_table = (gdf.loc[gdf["analysed_km2"] > 0, [NAME_FIELD, "analysed_km2", "flooded_ha"]]
+                         .sort_values("flooded_ha", ascending=False).round(1))
+    district_table.to_csv(f"{OUT_DIR}/flood_by_district.csv", index=False)
+    display(district_table)
+else:
+    print(f"No district file found at '{DISTRICT_FILE}', skipping the district table.")
+
+======================================================================
+### Cell 32: MARKDOWN cell (change cell type to Markdown)
+======================================================================
+## 13. Interpreting the results
+
+**Compare with official reports.** Compare your flooded area and flooded cropland with figures from Sri Lanka's Disaster Management Centre (DMC) and the Department of Agriculture for the same districts and dates. Our number will not match exactly. Why?
+- Our study area is a rectangle (or boundary) that may not cover whole districts
+- Our flood image is from a different date than the official report
+- Water levels change daily; rivers rise and recede between satellite passes
+- Official figures often count flood *and* landslide damage together; SAR flood mapping only sees standing water
+
+**Known limitations of SAR flood mapping in hilly terrain**
+- **Radar shadow and layover:** steep slopes facing away from the satellite look dark, like water. The slope and HAND masks reduce this, but cannot remove it fully
+- **Narrow valleys:** many Central Province rivers and valley floors are only a few pixels wide, so flooding can be missed or merged with noise
+- **Urban areas:** towns such as Kandy, Matale and Gampola have buildings that create bright "double-bounce" returns, so flood water between buildings is often missed
+- **Flooded vegetation:** water under tea, trees or crops can make the signal *brighter*, not darker
+- **Landslides** change backscatter too, but are not flood; check suspicious patches on steep ground
+- **Wind and rain:** wind-roughened water can look like land
+- **Dark dry surfaces:** smooth sand, tarmac and dry riverbeds can look like water
+- **Paddy fields:** fields already wet or recently transplanted in the pre-flood image can hide new flooding
+- **Thresholds are choices:** changing −3 dB, the water threshold, slope or HAND changes the area
+
+## 14. Practice exercises
+1. Repeat the analysis with the **VH** band (`pre_vh_f`, `post_vh_f`). Is the flooded area larger or smaller?
+2. Change `T_DIFF` to −2 dB and −5 dB. How sensitive is the flood area to this choice?
+3. Change `MAX_HAND` to 10 m and 30 m, and `MAX_SLOPE` to 3° and 8°. Which cleaning step changes the result the most?
+4. Change `MIN_PIXELS` to 50. What disappears from the map?
+5. In GEE, try the other pass direction (ascending vs descending) or another relative orbit. How different is the flood map?
+6. In GEE, set the flood window to a date in **mid-December**. Has the water receded?
+7. Use the water chart from Part A to pick the date of **maximum** flooding, and re-run the whole workflow.
