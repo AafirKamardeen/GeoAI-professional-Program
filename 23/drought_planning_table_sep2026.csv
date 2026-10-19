@@ -1,0 +1,28 @@
+district,region,spi_sep,vci,gw_rise_m,priority,action
+Ballari,North interior (dry),-3.09,0.0,3.44,100,"Declare drought: tankers, fodder camps, contingency crops"
+Chitradurga,Central,-2.78,0.4,2.16,94,"Declare drought: tankers, fodder camps, contingency crops"
+Vijayapura,North interior (dry),-2.58,24.0,3.89,93,"Declare drought: tankers, fodder camps, contingency crops"
+Koppal,North interior (dry),-2.09,0.0,3.11,92,"Declare drought: tankers, fodder camps, contingency crops"
+Raichur,North interior (dry),-2.2,9.2,3.65,91,"Declare drought: tankers, fodder camps, contingency crops"
+Kalaburagi,North interior (dry),-1.94,3.8,3.12,88,"Declare drought: tankers, fodder camps, contingency crops"
+Bidar,North interior (dry),-1.81,0.0,3.12,86,"Declare drought: tankers, fodder camps, contingency crops"
+Bengaluru Rural,Southern plains,-2.24,0.0,0.92,81,"Declare drought: tankers, fodder camps, contingency crops"
+Udupi,Coastal,-2.44,7.5,0.01,77,"Declare drought: tankers, fodder camps, contingency crops"
+Gadag,Central,-2.04,36.1,2.35,76,"Declare drought: tankers, fodder camps, contingency crops"
+Tumakuru,Southern plains,-1.96,15.2,1.71,76,"Declare drought: tankers, fodder camps, contingency crops"
+Kolar,Southern plains,-1.44,14.2,1.9,67,"Declare drought: tankers, fodder camps, contingency crops"
+Bagalkot,North interior (dry),-1.67,56.1,3.76,67,"Declare drought: tankers, fodder camps, contingency crops"
+Chamarajanagar,Southern plains,-1.79,54.4,2.21,64,"Declare drought: tankers, fodder camps, contingency crops"
+Davanagere,Central,-1.57,42.6,2.18,63,"Declare drought: tankers, fodder camps, contingency crops"
+Dharwad,Central,-1.89,58.4,1.25,59,"Intensify: borewell and tank repair, crop advisories"
+Bengaluru Urban,Southern plains,-1.48,56.6,1.53,53,"Intensify: borewell and tank repair, crop advisories"
+Mysuru,Southern plains,-0.93,11.1,0.82,51,"Intensify: borewell and tank repair, crop advisories"
+Shivamogga,Malnad,-0.93,13.6,-0.41,45,"Intensify: borewell and tank repair, crop advisories"
+Belagavi,Central,-0.89,28.5,0.29,41,"Intensify: borewell and tank repair, crop advisories"
+Hassan,Malnad,-1.03,44.4,0.13,38,"Watch: weekly monitoring, farmer advisories"
+Haveri,Central,-0.46,68.2,2.3,34,"Watch: weekly monitoring, farmer advisories"
+Mandya,Southern plains,-0.38,69.5,1.68,28,"Watch: weekly monitoring, farmer advisories"
+Uttara Kannada,Coastal,0.18,49.3,0.5,19,Normal: routine monitoring
+Chikkamagaluru,Malnad,0.35,43.4,0.2,18,Normal: routine monitoring
+Dakshina Kannada,Coastal,0.42,50.4,0.11,16,Normal: routine monitoring
+Kodagu,Malnad,0.97,100.0,0.53,4,Normal: routine monitoring

@@ -1,0 +1,703 @@
+district,year,ndvi_sep
+Bagalkot,2001,0.641
+Bagalkot,2002,0.43
+Bagalkot,2003,0.534
+Bagalkot,2004,0.498
+Bagalkot,2005,0.651
+Bagalkot,2006,0.351
+Bagalkot,2007,0.582
+Bagalkot,2008,0.537
+Bagalkot,2009,0.613
+Bagalkot,2010,0.529
+Bagalkot,2011,0.571
+Bagalkot,2012,0.458
+Bagalkot,2013,0.524
+Bagalkot,2014,0.546
+Bagalkot,2015,0.365
+Bagalkot,2016,0.57
+Bagalkot,2017,0.637
+Bagalkot,2018,0.576
+Bagalkot,2019,0.644
+Bagalkot,2020,0.419
+Bagalkot,2021,0.507
+Bagalkot,2022,0.512
+Bagalkot,2023,0.677
+Bagalkot,2024,0.437
+Bagalkot,2025,0.414
+Bagalkot,2026,0.534
+Bengaluru Rural,2001,0.213
+Bengaluru Rural,2002,0.628
+Bengaluru Rural,2003,0.519
+Bengaluru Rural,2004,0.557
+Bengaluru Rural,2005,0.389
+Bengaluru Rural,2006,0.405
+Bengaluru Rural,2007,0.409
+Bengaluru Rural,2008,0.358
+Bengaluru Rural,2009,0.479
+Bengaluru Rural,2010,0.53
+Bengaluru Rural,2011,0.434
+Bengaluru Rural,2012,0.371
+Bengaluru Rural,2013,0.327
+Bengaluru Rural,2014,0.442
+Bengaluru Rural,2015,0.615
+Bengaluru Rural,2016,0.601
+Bengaluru Rural,2017,0.614
+Bengaluru Rural,2018,0.587
+Bengaluru Rural,2019,0.644
+Bengaluru Rural,2020,0.62
+Bengaluru Rural,2021,0.391
+Bengaluru Rural,2022,0.409
+Bengaluru Rural,2023,0.487
+Bengaluru Rural,2024,0.578
+Bengaluru Rural,2025,0.504
+Bengaluru Rural,2026,0.181
+Bengaluru Urban,2001,0.35
+Bengaluru Urban,2002,0.664
+Bengaluru Urban,2003,0.415
+Bengaluru Urban,2004,0.644
+Bengaluru Urban,2005,0.562
+Bengaluru Urban,2006,0.407
+Bengaluru Urban,2007,0.442
+Bengaluru Urban,2008,0.363
+Bengaluru Urban,2009,0.358
+Bengaluru Urban,2010,0.568
+Bengaluru Urban,2011,0.592
+Bengaluru Urban,2012,0.505
+Bengaluru Urban,2013,0.523
+Bengaluru Urban,2014,0.315
+Bengaluru Urban,2015,0.51
+Bengaluru Urban,2016,0.63
+Bengaluru Urban,2017,0.544
+Bengaluru Urban,2018,0.429
+Bengaluru Urban,2019,0.438
+Bengaluru Urban,2020,0.505
+Bengaluru Urban,2021,0.519
+Bengaluru Urban,2022,0.428
+Bengaluru Urban,2023,0.363
+Bengaluru Urban,2024,0.677
+Bengaluru Urban,2025,0.326
+Bengaluru Urban,2026,0.52
+Belagavi,2001,0.484
+Belagavi,2002,0.408
+Belagavi,2003,0.523
+Belagavi,2004,0.531
+Belagavi,2005,0.587
+Belagavi,2006,0.461
+Belagavi,2007,0.691
+Belagavi,2008,0.28
+Belagavi,2009,0.518
+Belagavi,2010,0.418
+Belagavi,2011,0.598
+Belagavi,2012,0.52
+Belagavi,2013,0.651
+Belagavi,2014,0.373
+Belagavi,2015,0.228
+Belagavi,2016,0.676
+Belagavi,2017,0.225
+Belagavi,2018,0.541
+Belagavi,2019,0.283
+Belagavi,2020,0.477
+Belagavi,2021,0.274
+Belagavi,2022,0.249
+Belagavi,2023,0.669
+Belagavi,2024,0.499
+Belagavi,2025,0.602
+Belagavi,2026,0.358
+Ballari,2001,0.293
+Ballari,2002,0.646
+Ballari,2003,0.469
+Ballari,2004,0.348
+Ballari,2005,0.224
+Ballari,2006,0.389
+Ballari,2007,0.385
+Ballari,2008,0.514
+Ballari,2009,0.29
+Ballari,2010,0.371
+Ballari,2011,0.611
+Ballari,2012,0.663
+Ballari,2013,0.464
+Ballari,2014,0.65
+Ballari,2015,0.532
+Ballari,2016,0.625
+Ballari,2017,0.689
+Ballari,2018,0.485
+Ballari,2019,0.659
+Ballari,2020,0.304
+Ballari,2021,0.704
+Ballari,2022,0.405
+Ballari,2023,0.27
+Ballari,2024,0.591
+Ballari,2025,0.597
+Ballari,2026,0.221
+Bidar,2001,0.321
+Bidar,2002,0.624
+Bidar,2003,0.663
+Bidar,2004,0.503
+Bidar,2005,0.655
+Bidar,2006,0.54
+Bidar,2007,0.286
+Bidar,2008,0.318
+Bidar,2009,0.302
+Bidar,2010,0.68
+Bidar,2011,0.395
+Bidar,2012,0.396
+Bidar,2013,0.611
+Bidar,2014,0.393
+Bidar,2015,0.347
+Bidar,2016,0.681
+Bidar,2017,0.435
+Bidar,2018,0.542
+Bidar,2019,0.54
+Bidar,2020,0.572
+Bidar,2021,0.413
+Bidar,2022,0.419
+Bidar,2023,0.576
+Bidar,2024,0.537
+Bidar,2025,0.57
+Bidar,2026,0.211
+Vijayapura,2001,0.272
+Vijayapura,2002,0.411
+Vijayapura,2003,0.398
+Vijayapura,2004,0.508
+Vijayapura,2005,0.575
+Vijayapura,2006,0.418
+Vijayapura,2007,0.304
+Vijayapura,2008,0.711
+Vijayapura,2009,0.262
+Vijayapura,2010,0.602
+Vijayapura,2011,0.393
+Vijayapura,2012,0.528
+Vijayapura,2013,0.515
+Vijayapura,2014,0.367
+Vijayapura,2015,0.448
+Vijayapura,2016,0.616
+Vijayapura,2017,0.306
+Vijayapura,2018,0.601
+Vijayapura,2019,0.605
+Vijayapura,2020,0.56
+Vijayapura,2021,0.231
+Vijayapura,2022,0.624
+Vijayapura,2023,0.339
+Vijayapura,2024,0.256
+Vijayapura,2025,0.337
+Vijayapura,2026,0.346
+Chamarajanagar,2001,0.212
+Chamarajanagar,2002,0.543
+Chamarajanagar,2003,0.564
+Chamarajanagar,2004,0.647
+Chamarajanagar,2005,0.652
+Chamarajanagar,2006,0.664
+Chamarajanagar,2007,0.58
+Chamarajanagar,2008,0.565
+Chamarajanagar,2009,0.46
+Chamarajanagar,2010,0.396
+Chamarajanagar,2011,0.612
+Chamarajanagar,2012,0.268
+Chamarajanagar,2013,0.59
+Chamarajanagar,2014,0.488
+Chamarajanagar,2015,0.307
+Chamarajanagar,2016,0.614
+Chamarajanagar,2017,0.563
+Chamarajanagar,2018,0.31
+Chamarajanagar,2019,0.63
+Chamarajanagar,2020,0.374
+Chamarajanagar,2021,0.498
+Chamarajanagar,2022,0.581
+Chamarajanagar,2023,0.67
+Chamarajanagar,2024,0.214
+Chamarajanagar,2025,0.544
+Chamarajanagar,2026,0.461
+Chikkamagaluru,2001,0.242
+Chikkamagaluru,2002,0.393
+Chikkamagaluru,2003,0.388
+Chikkamagaluru,2004,0.634
+Chikkamagaluru,2005,0.491
+Chikkamagaluru,2006,0.415
+Chikkamagaluru,2007,0.18
+Chikkamagaluru,2008,0.29
+Chikkamagaluru,2009,0.548
+Chikkamagaluru,2010,0.731
+Chikkamagaluru,2011,0.617
+Chikkamagaluru,2012,0.59
+Chikkamagaluru,2013,0.432
+Chikkamagaluru,2014,0.417
+Chikkamagaluru,2015,0.648
+Chikkamagaluru,2016,0.34
+Chikkamagaluru,2017,0.482
+Chikkamagaluru,2018,0.606
+Chikkamagaluru,2019,0.213
+Chikkamagaluru,2020,0.711
+Chikkamagaluru,2021,0.356
+Chikkamagaluru,2022,0.352
+Chikkamagaluru,2023,0.648
+Chikkamagaluru,2024,0.673
+Chikkamagaluru,2025,0.571
+Chikkamagaluru,2026,0.419
+Chitradurga,2001,0.527
+Chitradurga,2002,0.261
+Chitradurga,2003,0.627
+Chitradurga,2004,0.663
+Chitradurga,2005,0.591
+Chitradurga,2006,0.481
+Chitradurga,2007,0.518
+Chitradurga,2008,0.398
+Chitradurga,2009,0.354
+Chitradurga,2010,0.356
+Chitradurga,2011,0.455
+Chitradurga,2012,0.697
+Chitradurga,2013,0.267
+Chitradurga,2014,0.624
+Chitradurga,2015,0.299
+Chitradurga,2016,0.668
+Chitradurga,2017,0.292
+Chitradurga,2018,0.246
+Chitradurga,2019,0.645
+Chitradurga,2020,0.513
+Chitradurga,2021,0.596
+Chitradurga,2022,0.631
+Chitradurga,2023,0.404
+Chitradurga,2024,0.499
+Chitradurga,2025,0.617
+Chitradurga,2026,0.248
+Dakshina Kannada,2001,0.601
+Dakshina Kannada,2002,0.446
+Dakshina Kannada,2003,0.548
+Dakshina Kannada,2004,0.672
+Dakshina Kannada,2005,0.56
+Dakshina Kannada,2006,0.488
+Dakshina Kannada,2007,0.222
+Dakshina Kannada,2008,0.383
+Dakshina Kannada,2009,0.546
+Dakshina Kannada,2010,0.248
+Dakshina Kannada,2011,0.48
+Dakshina Kannada,2012,0.254
+Dakshina Kannada,2013,0.501
+Dakshina Kannada,2014,0.516
+Dakshina Kannada,2015,0.489
+Dakshina Kannada,2016,0.684
+Dakshina Kannada,2017,0.617
+Dakshina Kannada,2018,0.639
+Dakshina Kannada,2019,0.734
+Dakshina Kannada,2020,0.259
+Dakshina Kannada,2021,0.298
+Dakshina Kannada,2022,0.358
+Dakshina Kannada,2023,0.657
+Dakshina Kannada,2024,0.226
+Dakshina Kannada,2025,0.563
+Dakshina Kannada,2026,0.48
+Davanagere,2001,0.542
+Davanagere,2002,0.588
+Davanagere,2003,0.436
+Davanagere,2004,0.548
+Davanagere,2005,0.604
+Davanagere,2006,0.319
+Davanagere,2007,0.291
+Davanagere,2008,0.641
+Davanagere,2009,0.449
+Davanagere,2010,0.583
+Davanagere,2011,0.294
+Davanagere,2012,0.494
+Davanagere,2013,0.651
+Davanagere,2014,0.512
+Davanagere,2015,0.696
+Davanagere,2016,0.525
+Davanagere,2017,0.659
+Davanagere,2018,0.487
+Davanagere,2019,0.516
+Davanagere,2020,0.304
+Davanagere,2021,0.58
+Davanagere,2022,0.442
+Davanagere,2023,0.29
+Davanagere,2024,0.441
+Davanagere,2025,0.508
+Davanagere,2026,0.463
+Dharwad,2001,0.487
+Dharwad,2002,0.381
+Dharwad,2003,0.296
+Dharwad,2004,0.381
+Dharwad,2005,0.657
+Dharwad,2006,0.323
+Dharwad,2007,0.548
+Dharwad,2008,0.455
+Dharwad,2009,0.566
+Dharwad,2010,0.306
+Dharwad,2011,0.696
+Dharwad,2012,0.357
+Dharwad,2013,0.308
+Dharwad,2014,0.665
+Dharwad,2015,0.549
+Dharwad,2016,0.623
+Dharwad,2017,0.367
+Dharwad,2018,0.432
+Dharwad,2019,0.547
+Dharwad,2020,0.601
+Dharwad,2021,0.34
+Dharwad,2022,0.181
+Dharwad,2023,0.558
+Dharwad,2024,0.422
+Dharwad,2025,0.253
+Dharwad,2026,0.482
+Gadag,2001,0.404
+Gadag,2002,0.448
+Gadag,2003,0.374
+Gadag,2004,0.227
+Gadag,2005,0.702
+Gadag,2006,0.698
+Gadag,2007,0.306
+Gadag,2008,0.395
+Gadag,2009,0.226
+Gadag,2010,0.597
+Gadag,2011,0.632
+Gadag,2012,0.313
+Gadag,2013,0.528
+Gadag,2014,0.459
+Gadag,2015,0.515
+Gadag,2016,0.371
+Gadag,2017,0.649
+Gadag,2018,0.476
+Gadag,2019,0.642
+Gadag,2020,0.631
+Gadag,2021,0.298
+Gadag,2022,0.467
+Gadag,2023,0.517
+Gadag,2024,0.381
+Gadag,2025,0.337
+Gadag,2026,0.398
+Kalaburagi,2001,0.607
+Kalaburagi,2002,0.662
+Kalaburagi,2003,0.432
+Kalaburagi,2004,0.452
+Kalaburagi,2005,0.426
+Kalaburagi,2006,0.422
+Kalaburagi,2007,0.474
+Kalaburagi,2008,0.395
+Kalaburagi,2009,0.382
+Kalaburagi,2010,0.226
+Kalaburagi,2011,0.367
+Kalaburagi,2012,0.488
+Kalaburagi,2013,0.234
+Kalaburagi,2014,0.38
+Kalaburagi,2015,0.7
+Kalaburagi,2016,0.514
+Kalaburagi,2017,0.608
+Kalaburagi,2018,0.492
+Kalaburagi,2019,0.446
+Kalaburagi,2020,0.413
+Kalaburagi,2021,0.65
+Kalaburagi,2022,0.322
+Kalaburagi,2023,0.408
+Kalaburagi,2024,0.249
+Kalaburagi,2025,0.659
+Kalaburagi,2026,0.244
+Hassan,2001,0.332
+Hassan,2002,0.653
+Hassan,2003,0.664
+Hassan,2004,0.489
+Hassan,2005,0.414
+Hassan,2006,0.506
+Hassan,2007,0.557
+Hassan,2008,0.606
+Hassan,2009,0.425
+Hassan,2010,0.544
+Hassan,2011,0.47
+Hassan,2012,0.2
+Hassan,2013,0.456
+Hassan,2014,0.549
+Hassan,2015,0.353
+Hassan,2016,0.582
+Hassan,2017,0.619
+Hassan,2018,0.62
+Hassan,2019,0.716
+Hassan,2020,0.541
+Hassan,2021,0.534
+Hassan,2022,0.401
+Hassan,2023,0.504
+Hassan,2024,0.409
+Hassan,2025,0.592
+Hassan,2026,0.429
+Haveri,2001,0.253
+Haveri,2002,0.668
+Haveri,2003,0.598
+Haveri,2004,0.589
+Haveri,2005,0.416
+Haveri,2006,0.457
+Haveri,2007,0.555
+Haveri,2008,0.578
+Haveri,2009,0.631
+Haveri,2010,0.659
+Haveri,2011,0.679
+Haveri,2012,0.32
+Haveri,2013,0.676
+Haveri,2014,0.351
+Haveri,2015,0.354
+Haveri,2016,0.251
+Haveri,2017,0.57
+Haveri,2018,0.63
+Haveri,2019,0.299
+Haveri,2020,0.313
+Haveri,2021,0.513
+Haveri,2022,0.29
+Haveri,2023,0.517
+Haveri,2024,0.404
+Haveri,2025,0.554
+Haveri,2026,0.543
+Kodagu,2001,0.537
+Kodagu,2002,0.635
+Kodagu,2003,0.241
+Kodagu,2004,0.457
+Kodagu,2005,0.559
+Kodagu,2006,0.32
+Kodagu,2007,0.296
+Kodagu,2008,0.33
+Kodagu,2009,0.252
+Kodagu,2010,0.581
+Kodagu,2011,0.624
+Kodagu,2012,0.543
+Kodagu,2013,0.576
+Kodagu,2014,0.32
+Kodagu,2015,0.408
+Kodagu,2016,0.665
+Kodagu,2017,0.567
+Kodagu,2018,0.276
+Kodagu,2019,0.598
+Kodagu,2020,0.667
+Kodagu,2021,0.393
+Kodagu,2022,0.267
+Kodagu,2023,0.334
+Kodagu,2024,0.328
+Kodagu,2025,0.455
+Kodagu,2026,0.678
+Kolar,2001,0.292
+Kolar,2002,0.389
+Kolar,2003,0.627
+Kolar,2004,0.423
+Kolar,2005,0.406
+Kolar,2006,0.468
+Kolar,2007,0.359
+Kolar,2008,0.434
+Kolar,2009,0.394
+Kolar,2010,0.515
+Kolar,2011,0.547
+Kolar,2012,0.486
+Kolar,2013,0.406
+Kolar,2014,0.63
+Kolar,2015,0.574
+Kolar,2016,0.553
+Kolar,2017,0.372
+Kolar,2018,0.517
+Kolar,2019,0.44
+Kolar,2020,0.376
+Kolar,2021,0.286
+Kolar,2022,0.477
+Kolar,2023,0.543
+Kolar,2024,0.551
+Kolar,2025,0.483
+Kolar,2026,0.335
+Koppal,2001,0.611
+Koppal,2002,0.579
+Koppal,2003,0.526
+Koppal,2004,0.424
+Koppal,2005,0.677
+Koppal,2006,0.684
+Koppal,2007,0.457
+Koppal,2008,0.59
+Koppal,2009,0.338
+Koppal,2010,0.603
+Koppal,2011,0.659
+Koppal,2012,0.491
+Koppal,2013,0.656
+Koppal,2014,0.541
+Koppal,2015,0.528
+Koppal,2016,0.481
+Koppal,2017,0.468
+Koppal,2018,0.487
+Koppal,2019,0.507
+Koppal,2020,0.417
+Koppal,2021,0.341
+Koppal,2022,0.546
+Koppal,2023,0.401
+Koppal,2024,0.424
+Koppal,2025,0.515
+Koppal,2026,0.271
+Mandya,2001,0.567
+Mandya,2002,0.591
+Mandya,2003,0.572
+Mandya,2004,0.263
+Mandya,2005,0.368
+Mandya,2006,0.522
+Mandya,2007,0.564
+Mandya,2008,0.414
+Mandya,2009,0.318
+Mandya,2010,0.57
+Mandya,2011,0.469
+Mandya,2012,0.679
+Mandya,2013,0.596
+Mandya,2014,0.297
+Mandya,2015,0.494
+Mandya,2016,0.636
+Mandya,2017,0.333
+Mandya,2018,0.572
+Mandya,2019,0.652
+Mandya,2020,0.525
+Mandya,2021,0.728
+Mandya,2022,0.616
+Mandya,2023,0.487
+Mandya,2024,0.291
+Mandya,2025,0.461
+Mandya,2026,0.586
+Mysuru,2001,0.613
+Mysuru,2002,0.591
+Mysuru,2003,0.664
+Mysuru,2004,0.592
+Mysuru,2005,0.563
+Mysuru,2006,0.625
+Mysuru,2007,0.238
+Mysuru,2008,0.321
+Mysuru,2009,0.404
+Mysuru,2010,0.637
+Mysuru,2011,0.488
+Mysuru,2012,0.523
+Mysuru,2013,0.422
+Mysuru,2014,0.653
+Mysuru,2015,0.276
+Mysuru,2016,0.437
+Mysuru,2017,0.409
+Mysuru,2018,0.598
+Mysuru,2019,0.452
+Mysuru,2020,0.299
+Mysuru,2021,0.43
+Mysuru,2022,0.688
+Mysuru,2023,0.453
+Mysuru,2024,0.553
+Mysuru,2025,0.429
+Mysuru,2026,0.288
+Raichur,2001,0.593
+Raichur,2002,0.454
+Raichur,2003,0.707
+Raichur,2004,0.538
+Raichur,2005,0.363
+Raichur,2006,0.248
+Raichur,2007,0.437
+Raichur,2008,0.43
+Raichur,2009,0.44
+Raichur,2010,0.62
+Raichur,2011,0.519
+Raichur,2012,0.492
+Raichur,2013,0.482
+Raichur,2014,0.595
+Raichur,2015,0.675
+Raichur,2016,0.493
+Raichur,2017,0.333
+Raichur,2018,0.625
+Raichur,2019,0.615
+Raichur,2020,0.644
+Raichur,2021,0.397
+Raichur,2022,0.637
+Raichur,2023,0.401
+Raichur,2024,0.306
+Raichur,2025,0.611
+Raichur,2026,0.29
+Shivamogga,2001,0.409
+Shivamogga,2002,0.453
+Shivamogga,2003,0.374
+Shivamogga,2004,0.508
+Shivamogga,2005,0.423
+Shivamogga,2006,0.576
+Shivamogga,2007,0.636
+Shivamogga,2008,0.641
+Shivamogga,2009,0.486
+Shivamogga,2010,0.642
+Shivamogga,2011,0.502
+Shivamogga,2012,0.253
+Shivamogga,2013,0.7
+Shivamogga,2014,0.278
+Shivamogga,2015,0.521
+Shivamogga,2016,0.709
+Shivamogga,2017,0.269
+Shivamogga,2018,0.591
+Shivamogga,2019,0.663
+Shivamogga,2020,0.263
+Shivamogga,2021,0.246
+Shivamogga,2022,0.624
+Shivamogga,2023,0.405
+Shivamogga,2024,0.545
+Shivamogga,2025,0.346
+Shivamogga,2026,0.309
+Tumakuru,2001,0.6
+Tumakuru,2002,0.286
+Tumakuru,2003,0.356
+Tumakuru,2004,0.382
+Tumakuru,2005,0.51
+Tumakuru,2006,0.666
+Tumakuru,2007,0.505
+Tumakuru,2008,0.434
+Tumakuru,2009,0.495
+Tumakuru,2010,0.516
+Tumakuru,2011,0.38
+Tumakuru,2012,0.455
+Tumakuru,2013,0.574
+Tumakuru,2014,0.569
+Tumakuru,2015,0.264
+Tumakuru,2016,0.513
+Tumakuru,2017,0.645
+Tumakuru,2018,0.551
+Tumakuru,2019,0.442
+Tumakuru,2020,0.612
+Tumakuru,2021,0.433
+Tumakuru,2022,0.597
+Tumakuru,2023,0.64
+Tumakuru,2024,0.499
+Tumakuru,2025,0.603
+Tumakuru,2026,0.325
+Udupi,2001,0.571
+Udupi,2002,0.362
+Udupi,2003,0.443
+Udupi,2004,0.458
+Udupi,2005,0.235
+Udupi,2006,0.394
+Udupi,2007,0.515
+Udupi,2008,0.556
+Udupi,2009,0.497
+Udupi,2010,0.406
+Udupi,2011,0.401
+Udupi,2012,0.461
+Udupi,2013,0.473
+Udupi,2014,0.438
+Udupi,2015,0.65
+Udupi,2016,0.209
+Udupi,2017,0.65
+Udupi,2018,0.607
+Udupi,2019,0.529
+Udupi,2020,0.587
+Udupi,2021,0.632
+Udupi,2022,0.533
+Udupi,2023,0.312
+Udupi,2024,0.549
+Udupi,2025,0.628
+Udupi,2026,0.242
+Uttara Kannada,2001,0.386
+Uttara Kannada,2002,0.661
+Uttara Kannada,2003,0.626
+Uttara Kannada,2004,0.55
+Uttara Kannada,2005,0.466
+Uttara Kannada,2006,0.464
+Uttara Kannada,2007,0.52
+Uttara Kannada,2008,0.405
+Uttara Kannada,2009,0.349
+Uttara Kannada,2010,0.611
+Uttara Kannada,2011,0.43
+Uttara Kannada,2012,0.576
+Uttara Kannada,2013,0.451
+Uttara Kannada,2014,0.714
+Uttara Kannada,2015,0.481
+Uttara Kannada,2016,0.694
+Uttara Kannada,2017,0.429
+Uttara Kannada,2018,0.511
+Uttara Kannada,2019,0.547
+Uttara Kannada,2020,0.564
+Uttara Kannada,2021,0.386
+Uttara Kannada,2022,0.341
+Uttara Kannada,2023,0.604
+Uttara Kannada,2024,0.606
+Uttara Kannada,2025,0.363
+Uttara Kannada,2026,0.525
