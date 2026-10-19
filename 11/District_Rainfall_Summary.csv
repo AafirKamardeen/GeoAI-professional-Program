@@ -1,0 +1,10 @@
+District,Station_Count,Average_Rainfall_mm,Maximum_Rainfall_mm,Minimum_Rainfall_mm
+Central_A,3,898.0,947,845
+Central_B,2,1016.0,1054,978
+Central_C,3,830.6666666666666,865,799
+North_A,3,780.3333333333334,812,756
+North_B,3,975.0,1012,923
+North_C,2,707.5,731,684
+South_A,2,768.0,815,721
+South_B,3,1018.3333333333334,1088,936
+South_C,3,853.3333333333334,917,754

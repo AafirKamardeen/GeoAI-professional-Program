@@ -1,0 +1,31 @@
+{
+"type": "FeatureCollection",
+"name": "Rainfall_Stations_With_District",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Station": "Station_01", "Longitude": 0.25, "Latitude": 0.25, "Rainfall_mm": 812, "index_right": 0, "District": "North_A", "Zone": "North" }, "geometry": { "type": "Point", "coordinates": [ 0.25, 0.25 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_02", "Longitude": 0.7, "Latitude": 0.65, "Rainfall_mm": 756, "index_right": 0, "District": "North_A", "Zone": "North" }, "geometry": { "type": "Point", "coordinates": [ 0.7, 0.65 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_03", "Longitude": 1.3, "Latitude": 0.3, "Rainfall_mm": 923, "index_right": 1, "District": "North_B", "Zone": "North" }, "geometry": { "type": "Point", "coordinates": [ 1.3, 0.3 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_04", "Longitude": 1.75, "Latitude": 0.75, "Rainfall_mm": 1012, "index_right": 1, "District": "North_B", "Zone": "North" }, "geometry": { "type": "Point", "coordinates": [ 1.75, 0.75 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_05", "Longitude": 2.4, "Latitude": 0.4, "Rainfall_mm": 684, "index_right": 2, "District": "North_C", "Zone": "North" }, "geometry": { "type": "Point", "coordinates": [ 2.4, 0.4 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_06", "Longitude": 2.8, "Latitude": 0.8, "Rainfall_mm": 731, "index_right": 2, "District": "North_C", "Zone": "North" }, "geometry": { "type": "Point", "coordinates": [ 2.8, 0.8 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_07", "Longitude": 0.2, "Latitude": 1.25, "Rainfall_mm": 845, "index_right": 3, "District": "Central_A", "Zone": "Central" }, "geometry": { "type": "Point", "coordinates": [ 0.2, 1.25 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_08", "Longitude": 0.65, "Latitude": 1.7, "Rainfall_mm": 902, "index_right": 3, "District": "Central_A", "Zone": "Central" }, "geometry": { "type": "Point", "coordinates": [ 0.65, 1.7 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_09", "Longitude": 1.35, "Latitude": 1.2, "Rainfall_mm": 978, "index_right": 4, "District": "Central_B", "Zone": "Central" }, "geometry": { "type": "Point", "coordinates": [ 1.35, 1.2 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_10", "Longitude": 1.8, "Latitude": 1.65, "Rainfall_mm": 1054, "index_right": 4, "District": "Central_B", "Zone": "Central" }, "geometry": { "type": "Point", "coordinates": [ 1.8, 1.65 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_11", "Longitude": 2.35, "Latitude": 1.25, "Rainfall_mm": 799, "index_right": 5, "District": "Central_C", "Zone": "Central" }, "geometry": { "type": "Point", "coordinates": [ 2.35, 1.25 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_12", "Longitude": 2.75, "Latitude": 1.75, "Rainfall_mm": 865, "index_right": 5, "District": "Central_C", "Zone": "Central" }, "geometry": { "type": "Point", "coordinates": [ 2.75, 1.75 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_13", "Longitude": 0.3, "Latitude": 2.3, "Rainfall_mm": 721, "index_right": 6, "District": "South_A", "Zone": "South" }, "geometry": { "type": "Point", "coordinates": [ 0.3, 2.3 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_14", "Longitude": 0.75, "Latitude": 2.75, "Rainfall_mm": 815, "index_right": 6, "District": "South_A", "Zone": "South" }, "geometry": { "type": "Point", "coordinates": [ 0.75, 2.75 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_15", "Longitude": 1.25, "Latitude": 2.35, "Rainfall_mm": 936, "index_right": 7, "District": "South_B", "Zone": "South" }, "geometry": { "type": "Point", "coordinates": [ 1.25, 2.35 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_16", "Longitude": 1.75, "Latitude": 2.8, "Rainfall_mm": 1088, "index_right": 7, "District": "South_B", "Zone": "South" }, "geometry": { "type": "Point", "coordinates": [ 1.75, 2.8 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_17", "Longitude": 2.35, "Latitude": 2.3, "Rainfall_mm": 754, "index_right": 8, "District": "South_C", "Zone": "South" }, "geometry": { "type": "Point", "coordinates": [ 2.35, 2.3 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_18", "Longitude": 2.75, "Latitude": 2.7, "Rainfall_mm": 889, "index_right": 8, "District": "South_C", "Zone": "South" }, "geometry": { "type": "Point", "coordinates": [ 2.75, 2.7 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_19", "Longitude": 0.48, "Latitude": 1.48, "Rainfall_mm": 947, "index_right": 3, "District": "Central_A", "Zone": "Central" }, "geometry": { "type": "Point", "coordinates": [ 0.48, 1.48 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_20", "Longitude": 2.52, "Latitude": 1.52, "Rainfall_mm": 828, "index_right": 5, "District": "Central_C", "Zone": "Central" }, "geometry": { "type": "Point", "coordinates": [ 2.52, 1.52 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_21", "Longitude": 1.48, "Latitude": 0.52, "Rainfall_mm": 990, "index_right": 1, "District": "North_B", "Zone": "North" }, "geometry": { "type": "Point", "coordinates": [ 1.48, 0.52 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_22", "Longitude": 1.52, "Latitude": 2.52, "Rainfall_mm": 1031, "index_right": 7, "District": "South_B", "Zone": "South" }, "geometry": { "type": "Point", "coordinates": [ 1.52, 2.52 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_23", "Longitude": 0.15, "Latitude": 0.85, "Rainfall_mm": 773, "index_right": 0, "District": "North_A", "Zone": "North" }, "geometry": { "type": "Point", "coordinates": [ 0.15, 0.85 ] } },
+{ "type": "Feature", "properties": { "Station": "Station_24", "Longitude": 2.85, "Latitude": 2.15, "Rainfall_mm": 917, "index_right": 8, "District": "South_C", "Zone": "South" }, "geometry": { "type": "Point", "coordinates": [ 2.85, 2.15 ] } }
+]
+}

@@ -1,0 +1,16 @@
+{
+"type": "FeatureCollection",
+"name": "District_Rainfall_Analysis",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "District": "North_A", "Zone": "North", "Station_Count": 3, "Average_Rainfall_mm": 780.33333333333337, "Maximum_Rainfall_mm": 812, "Minimum_Rainfall_mm": 756 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 0.0, 0.0 ], [ 1.0, 0.0 ], [ 1.0, 1.0 ], [ 0.0, 1.0 ], [ 0.0, 0.0 ] ] ] } },
+{ "type": "Feature", "properties": { "District": "North_B", "Zone": "North", "Station_Count": 3, "Average_Rainfall_mm": 975.0, "Maximum_Rainfall_mm": 1012, "Minimum_Rainfall_mm": 923 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 1.0, 0.0 ], [ 2.0, 0.0 ], [ 2.0, 1.0 ], [ 1.0, 1.0 ], [ 1.0, 0.0 ] ] ] } },
+{ "type": "Feature", "properties": { "District": "North_C", "Zone": "North", "Station_Count": 2, "Average_Rainfall_mm": 707.5, "Maximum_Rainfall_mm": 731, "Minimum_Rainfall_mm": 684 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 2.0, 0.0 ], [ 3.0, 0.0 ], [ 3.0, 1.0 ], [ 2.0, 1.0 ], [ 2.0, 0.0 ] ] ] } },
+{ "type": "Feature", "properties": { "District": "Central_A", "Zone": "Central", "Station_Count": 3, "Average_Rainfall_mm": 898.0, "Maximum_Rainfall_mm": 947, "Minimum_Rainfall_mm": 845 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 0.0, 1.0 ], [ 1.0, 1.0 ], [ 1.0, 2.0 ], [ 0.0, 2.0 ], [ 0.0, 1.0 ] ] ] } },
+{ "type": "Feature", "properties": { "District": "Central_B", "Zone": "Central", "Station_Count": 2, "Average_Rainfall_mm": 1016.0, "Maximum_Rainfall_mm": 1054, "Minimum_Rainfall_mm": 978 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 1.0, 1.0 ], [ 2.0, 1.0 ], [ 2.0, 2.0 ], [ 1.0, 2.0 ], [ 1.0, 1.0 ] ] ] } },
+{ "type": "Feature", "properties": { "District": "Central_C", "Zone": "Central", "Station_Count": 3, "Average_Rainfall_mm": 830.66666666666663, "Maximum_Rainfall_mm": 865, "Minimum_Rainfall_mm": 799 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 2.0, 1.0 ], [ 3.0, 1.0 ], [ 3.0, 2.0 ], [ 2.0, 2.0 ], [ 2.0, 1.0 ] ] ] } },
+{ "type": "Feature", "properties": { "District": "South_A", "Zone": "South", "Station_Count": 2, "Average_Rainfall_mm": 768.0, "Maximum_Rainfall_mm": 815, "Minimum_Rainfall_mm": 721 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 0.0, 2.0 ], [ 1.0, 2.0 ], [ 1.0, 3.0 ], [ 0.0, 3.0 ], [ 0.0, 2.0 ] ] ] } },
+{ "type": "Feature", "properties": { "District": "South_B", "Zone": "South", "Station_Count": 3, "Average_Rainfall_mm": 1018.3333333333334, "Maximum_Rainfall_mm": 1088, "Minimum_Rainfall_mm": 936 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 1.0, 2.0 ], [ 2.0, 2.0 ], [ 2.0, 3.0 ], [ 1.0, 3.0 ], [ 1.0, 2.0 ] ] ] } },
+{ "type": "Feature", "properties": { "District": "South_C", "Zone": "South", "Station_Count": 3, "Average_Rainfall_mm": 853.33333333333337, "Maximum_Rainfall_mm": 917, "Minimum_Rainfall_mm": 754 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 2.0, 2.0 ], [ 3.0, 2.0 ], [ 3.0, 3.0 ], [ 2.0, 3.0 ], [ 2.0, 2.0 ] ] ] } }
+]
+}
