@@ -1,0 +1,202 @@
+// =====================================================================
+//  GeoAI Professional Program | OrbitalIQ Analytics
+//  FLOOD MAPPING WITH SENTINEL-1 SAR
+//  Part A: Data download in Google Earth Engine (Code Editor)
+//
+//  Case study : Upper Assam floods, July 2026
+//               (Sivasagar - Charaideo - Jorhat, Disang/Dikhow/Jhanji rivers)
+//  Output     : 3 GeoTIFFs to Google Drive -> analysed in JupyterLab (Part B)
+//               1. assam_s1_pre.tif   (pre-flood  VV, VH in dB)
+//               2. assam_s1_post.tif  (flood-time VV, VH in dB)
+//               3. assam_aux.tif      (permanent water, land cover, slope)
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// 1. STUDY AREA
+// ---------------------------------------------------------------------
+// Option A (default): rectangle covering Jorhat, Sivasagar and Charaideo
+var aoi = ee.Geometry.Rectangle([94.15, 26.70, 95.10, 27.15]);
+
+// Option B: use your own district shapefile uploaded as an asset
+// (field name may differ in your shapefile - check it in the asset table)
+// var districts = ee.FeatureCollection('projects/YOUR-PROJECT/assets/assam_districts');
+// var aoi = districts
+//   .filter(ee.Filter.inList('DISTRICT', ['Sivasagar', 'Charaideo', 'Jorhat']))
+//   .geometry();
+
+Map.centerObject(aoi, 9);
+Map.setOptions('SATELLITE');
+
+
+// ---------------------------------------------------------------------
+// 2. DATES AND ORBIT  (edit these after running Step 3)
+// ---------------------------------------------------------------------
+// Descending track over the study area repeats every 12 days:
+// 5 Jul -> 17 Jul -> 29 Jul -> 10 Aug -> 22 Aug ...
+// 17 Jul = day before the 18-20 Jul cloudburst  -> pre-flood
+// 29 Jul = highest water extent of the season   -> flood
+var PRE_START  = '2026-07-01';   // includes 5 Jul and 17 Jul passes
+var PRE_END    = '2026-07-18';   // end date is exclusive
+var POST_START = '2026-07-28';   // the 29 Jul pass
+var POST_END   = '2026-07-31';
+var PASS       = 'DESCENDING';   // use the SAME pass for pre and post
+
+var SCALE = 20;                  // metres. Use 30 if exports are too big
+var CRS   = 'EPSG:32646';        // UTM zone 46N -> pixel size in metres
+
+
+// ---------------------------------------------------------------------
+// 3. SENTINEL-1 GRD COLLECTION
+//    Already calibrated, terrain corrected and in decibels (dB) in GEE
+// ---------------------------------------------------------------------
+var s1All = ee.ImageCollection('COPERNICUS/S1_GRD')
+  .filterBounds(aoi)
+  .filter(ee.Filter.eq('instrumentMode', 'IW'))
+  .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
+  .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VH'))
+  .select(['VV', 'VH']);
+
+// --- Step 3a: which passes exist this monsoon? Run this first. ---
+var season = s1All.filterDate('2026-06-01', '2026-10-01');
+print('Ascending passes Jun-Sep 2026:',
+      season.filter(ee.Filter.eq('orbitProperties_pass', 'ASCENDING')).size());
+print('Descending passes Jun-Sep 2026:',
+      season.filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING')).size());
+
+var passList = ee.FeatureCollection(season.toList(300).map(function (img) {
+  img = ee.Image(img);
+  return ee.Feature(null, {
+    date:      img.date().format('YYYY-MM-dd HH:mm'),
+    pass:      img.get('orbitProperties_pass'),
+    satellite: ee.String('S1').cat(ee.String(img.get('platform_number'))),
+    relOrbit:  img.get('relativeOrbitNumber_start')
+  });
+}));
+print('All Sentinel-1 passes over the study area:', passList);
+
+// Keep only the chosen pass direction
+var s1 = s1All.filter(ee.Filter.eq('orbitProperties_pass', PASS));
+
+
+// ---------------------------------------------------------------------
+// 4. PRE-FLOOD AND FLOOD COMPOSITES
+// ---------------------------------------------------------------------
+var preCol  = s1.filterDate(PRE_START, PRE_END);
+var postCol = s1.filterDate(POST_START, POST_END);
+
+print('Pre-flood images used:', preCol.size(),
+      preCol.aggregate_array('system:time_start')
+            .map(function (t) { return ee.Date(t).format('YYYY-MM-dd'); }));
+print('Flood images used:', postCol.size(),
+      postCol.aggregate_array('system:time_start')
+             .map(function (t) { return ee.Date(t).format('YYYY-MM-dd'); }));
+
+// Stop with a clear message if a date window has no images
+if (preCol.size().getInfo() === 0 || postCol.size().getInfo() === 0) {
+  throw new Error('No Sentinel-1 image in the pre or flood window for ' + PASS +
+    ' passes. Check the pass list printed above and change the dates.');
+}
+
+// Pre-flood: median of several passes -> stable "normal" surface
+var pre = preCol.median().clip(aoi);
+// Flood: mosaic of the pass(es) in the flood window -> the flood day itself
+var post = postCol.mosaic().clip(aoi);
+
+
+// ---------------------------------------------------------------------
+// 5. LOOK AT THE DATA
+// ---------------------------------------------------------------------
+var visVV = {bands: ['VV'], min: -25, max: 0};
+Map.addLayer(pre,  visVV, '1. Pre-flood VV (dB)');
+Map.addLayer(post, visVV, '2. Flood VV (dB)');
+
+// Change composite: R = pre, G = post, B = post
+// Land that turned into water appears RED
+var changeRGB = ee.Image.cat([pre.select('VV'), post.select('VV'), post.select('VV')]);
+Map.addLayer(changeRGB, {min: -25, max: 0}, '3. Change RGB (red = new water)');
+
+Map.addLayer(ee.Image().paint(aoi, 0, 2), {palette: 'yellow'}, 'Study area');
+
+
+// ---------------------------------------------------------------------
+// 6. MONITORING: how did water extent change through the monsoon?
+//    % of the study area darker than -18 dB (water-like), every pass
+// ---------------------------------------------------------------------
+var waterFraction = season
+  .filter(ee.Filter.eq('orbitProperties_pass', PASS))
+  .map(function (img) {
+    return img.select('VV').lt(-18).multiply(100).rename('water_pct')
+              .copyProperties(img, ['system:time_start']);
+  });
+
+print(ui.Chart.image.series({
+    imageCollection: waterFraction,
+    region: aoi,
+    reducer: ee.Reducer.mean(),
+    scale: 100
+  }).setOptions({
+    title: 'Water-like area (% of study area), ' + PASS + ' passes, Jun-Sep 2026',
+    vAxis: {title: '% of area with VV < -18 dB'},
+    hAxis: {title: 'Date'},
+    lineWidth: 1, pointSize: 4, legend: {position: 'none'}
+  }));
+// Note: a pass that covers only part of the study area can give a
+// misleading value. Check the pass list above when reading the chart.
+
+
+// ---------------------------------------------------------------------
+// 7. SUPPORTING LAYERS (used to clean the flood map in Jupyter)
+// ---------------------------------------------------------------------
+// JRC Global Surface Water: % of months water was seen, 1984-2021
+var jrc = ee.Image('JRC/GSW1_4/GlobalSurfaceWater').select('occurrence').unmask(0);
+// ESA WorldCover 2021 (10 m): land cover classes
+var worldcover = ee.ImageCollection('ESA/WorldCover/v200').first().select('Map');
+// SRTM 30 m DEM -> slope in degrees
+var slope = ee.Terrain.slope(ee.Image('USGS/SRTMGL1_003'));
+
+var aux = ee.Image.cat([
+    jrc.rename('jrc_occurrence'),
+    worldcover.rename('worldcover'),
+    slope.round().rename('slope_deg')
+  ]).toInt16().clip(aoi);
+
+Map.addLayer(jrc.updateMask(jrc.gt(0)),
+             {min: 0, max: 100, palette: ['ffffff', '0000ff']},
+             '4. Permanent water (JRC occurrence %)', false);
+
+
+// ---------------------------------------------------------------------
+// 8. EXPORT TO GOOGLE DRIVE  (Tasks tab -> RUN each task)
+// ---------------------------------------------------------------------
+var FOLDER = 'GeoAI_Flood_Assam';   // Google Drive folder
+
+Export.image.toDrive({
+  image: pre.toFloat(),
+  description: 'assam_s1_pre',
+  fileNamePrefix: 'assam_s1_pre',
+  folder: FOLDER, region: aoi, scale: SCALE, crs: CRS,
+  maxPixels: 1e10, fileFormat: 'GeoTIFF',
+  formatOptions: {noData: -9999}
+});
+
+Export.image.toDrive({
+  image: post.toFloat(),
+  description: 'assam_s1_post',
+  fileNamePrefix: 'assam_s1_post',
+  folder: FOLDER, region: aoi, scale: SCALE, crs: CRS,
+  maxPixels: 1e10, fileFormat: 'GeoTIFF',
+  formatOptions: {noData: -9999}
+});
+
+Export.image.toDrive({
+  image: aux,
+  description: 'assam_aux',
+  fileNamePrefix: 'assam_aux',
+  folder: FOLDER, region: aoi, scale: SCALE, crs: CRS,
+  maxPixels: 1e10, fileFormat: 'GeoTIFF',
+  formatOptions: {noData: -1}
+});
+
+// Download the 3 files from Drive and put them in the same folder
+// as the Jupyter notebook (Part B).
