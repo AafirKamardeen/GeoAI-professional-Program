@@ -1,0 +1,55 @@
+// =========================================================
+// Sentinel-2 download for the Spectral Index Explorer app
+// GeoAI Professional Program - OrbitalIQ Analytics
+// =========================================================
+
+// ---- 1. Study area (Bhubaneswar + Mahanadi river) ----
+// Change this, or draw your own polygon and rename it 'aoi'
+var aoi = ee.Geometry.Rectangle([85.70, 20.20, 85.95, 20.40]);
+Map.centerObject(aoi, 11);
+
+// ---- 2. Dates ----
+// Use dry-season months: monsoon images (Jun-Sep) are cloudy
+var startDate = '2026-01-01';
+var endDate   = '2026-03-31';
+
+// ---- 3. Cloud mask using the Scene Classification Layer (SCL) ----
+// 3 = cloud shadow, 8 = medium cloud, 9 = high cloud, 10 = cirrus
+function maskClouds(img) {
+  var scl = img.select('SCL');
+  var clear = scl.neq(3).and(scl.neq(8)).and(scl.neq(9)).and(scl.neq(10));
+  return img.updateMask(clear);
+}
+
+// ---- 4. Load, filter, mask ----
+var collection = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+  .filterBounds(aoi)
+  .filterDate(startDate, endDate)
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+  .map(maskClouds);
+
+print('Number of images used:', collection.size());
+
+// ---- 5. Median composite with the 6 bands the app needs ----
+// Order matters: Blue, Green, Red, NIR, SWIR1, SWIR2
+var image = collection.median()
+  .select(['B2', 'B3', 'B4', 'B8', 'B11', 'B12'])
+  .clip(aoi);
+
+// ---- 6. Preview before exporting ----
+Map.addLayer(image, {bands: ['B4', 'B3', 'B2'], min: 0, max: 3000}, 'True colour');
+Map.addLayer(image, {bands: ['B8', 'B4', 'B3'], min: 0, max: 4000}, 'False colour', false);
+var ndvi = image.normalizedDifference(['B8', 'B4']);
+Map.addLayer(ndvi, {min: -0.2, max: 0.8, palette: ['red', 'yellow', 'green']}, 'NDVI check', false);
+
+// ---- 7. Export to Google Drive ----
+Export.image.toDrive({
+  image: image.unmask(0).toUint16(),   // 0 = no data; the app masks it automatically
+  description: 'S2_Bhubaneswar_2026Q1',
+  folder: 'GEE_Exports',
+  region: aoi,
+  scale: 10,                           // 10 m resolution
+  crs: 'EPSG:32645',                   // UTM 45N, gives correct area in hectares
+  maxPixels: 1e10,
+  fileFormat: 'GeoTIFF'
+});
