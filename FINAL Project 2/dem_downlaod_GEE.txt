@@ -1,0 +1,26 @@
+// ---- Study area (Mahanadi tributaries near Bhubaneswar) ----
+var aoi = ee.Geometry.Rectangle([85.40, 20.15, 85.90, 20.55]);
+Map.centerObject(aoi, 10);
+
+// ---- Copernicus GLO-30 DEM (30 m) ----
+var dem = ee.ImageCollection('COPERNICUS/DEM/GLO30')
+  .filterBounds(aoi).select('DEM').mosaic()
+  .setDefaultProjection('EPSG:4326', null, 30)
+  .clip(aoi);
+
+// Alternative: SRTM 30 m
+// var dem = ee.Image('USGS/SRTMGL1_003').select('elevation').clip(aoi);
+
+Map.addLayer(ee.Terrain.hillshade(dem), {}, 'Hillshade');
+Map.addLayer(dem, {min: 0, max: 600, palette: ['green', 'yellow', 'brown', 'white']}, 'DEM', true, 0.6);
+
+Export.image.toDrive({
+  image: dem.toFloat(),
+  description: 'DEM_Mahanadi_30m',
+  folder: 'GEE_Exports',
+  region: aoi,
+  scale: 30,
+  crs: 'EPSG:32645',      // UTM 45N, so areas come out in true km²
+  maxPixels: 1e10,
+  fileFormat: 'GeoTIFF'
+});
